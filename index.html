@@ -365,7 +365,9 @@ a{ color:inherit; }
 
 
 /* ============================================================
-   PHOTO COLLAGE
+   PHOTO COLLAGE — responsive permanent grid
+   The browser owns the geometry; JavaScript only supplies the
+   six photo elements. This keeps the collage stable on phones.
    ============================================================ */
 
 #final-collage{
@@ -373,28 +375,35 @@ a{ color:inherit; }
   top:0;
   left:0;
   width:100%;
+  height:66vh;
 
-  /*
-     Desktop:
-     Keep the collage in the upper portion of the screen.
-  */
-  height:70vh;
+  padding:
+    14px
+    clamp(18px, 5vw, 64px)
+    8px;
 
   z-index:3;
   pointer-events:none;
   overflow:hidden;
+
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  grid-template-rows:repeat(2, minmax(0, 1fr));
+  gap:14px;
+
+  align-items:center;
+  justify-items:center;
 }
 
 .final-polaroid{
-  position:absolute;
+  position:relative;
 
-  /*
-     Desktop card size.
-     JavaScript still determines the actual final width.
-  */
-  width:clamp(150px,14vw,210px);
+  width:min(100%, 220px);
+  height:100%;
+  min-width:0;
+  min-height:0;
 
-  padding:8px 8px 26px;
+  padding:8px 8px 22px;
   margin:0;
 
   background:#fffdf7;
@@ -408,12 +417,14 @@ a{ color:inherit; }
 
   transform:
     translateY(28px)
-    scale(.92)
+    scale(.94)
     rotate(0deg);
 
   transition:
     opacity .8s ease,
     transform 1s cubic-bezier(.2,.8,.2,1);
+
+  overflow:visible;
 }
 
 .final-polaroid.show{
@@ -423,8 +434,13 @@ a{ color:inherit; }
 .final-polaroid img,
 .final-polaroid .photo-slot{
   width:100%;
-  aspect-ratio:4/5;
+  height:calc(100% - 4px);
+  min-width:0;
+  min-height:0;
+
   object-fit:cover;
+  object-position:center;
+
   display:block;
 }
 
@@ -451,20 +467,29 @@ a{ color:inherit; }
 }
 
 .final-polaroid figcaption{
-  margin-top:6px;
+  position:absolute;
+  left:8px;
+  right:8px;
+  bottom:4px;
+
   min-height:12px;
   text-align:center;
 
   color:var(--ink-soft);
   font-family:'Patrick Hand',cursive;
-  font-size:.78rem;
+  font-size:.72rem;
+  line-height:1;
+
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
 }
 
 .final-polaroid::after{
   content:"";
 
   position:absolute;
-  top:-10px;
+  top:-9px;
   left:50%;
 
   width:52px;
@@ -490,7 +515,7 @@ a{ color:inherit; }
 #final-copy{
   position:absolute;
   left:50%;
-  bottom:5%;
+  bottom:3%;
 
   transform:translateX(-50%);
 
@@ -504,12 +529,11 @@ a{ color:inherit; }
   text-align:center;
   color:#fff8e2;
 
-  width:min(760px,76vw);
-
-  min-height:24%;
+  width:min(760px, 88vw);
+  min-height:27%;
 
   padding:
-    clamp(18px,3vh,34px)
+    clamp(12px,2vh,24px)
     clamp(18px,3vw,40px);
 
   background:transparent;
@@ -561,61 +585,92 @@ a{ color:inherit; }
 @media (max-width:700px){
 
   /*
-     MOBILE FINAL LAYOUT
+     Six permanent slots in a 2 × 3 grid.
 
-     The photo grid gets the upper ~62% of the viewport.
-     The birthday message occupies the lower section.
+     The grid gets a fixed percentage of the viewport and every
+     card is constrained by its own grid cell. No card can push
+     another card or the birthday message out of position.
   */
 
   #final-collage{
     top:0;
-    height:63vh;
+    height:70vh;
     width:100%;
+
+    padding:
+      8px
+      7px
+      5px;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    grid-template-rows:
+      repeat(3, minmax(0, 1fr));
+
+    column-gap:6px;
+    row-gap:8px;
+
+    align-items:stretch;
+    justify-items:stretch;
+
     overflow:hidden;
   }
 
-
-  /*
-     The JS sets the actual width.
-
-     This provides a larger starting point and makes the
-     polaroids visually dominant on phones.
-  */
   .final-polaroid{
-    width:clamp(145px,47vw,185px);
-    padding:7px 7px 21px;
+    width:100%;
+    height:100%;
+
+    padding:
+      5px
+      5px
+      17px;
+
+    box-shadow:
+      0 7px 15px rgba(35,24,17,.28),
+      0 2px 4px rgba(35,24,17,.14);
+
+    transform:
+      translateY(18px)
+      scale(.96)
+      rotate(0deg);
   }
 
+  .final-polaroid img,
+  .final-polaroid .photo-slot{
+    width:100%;
+    height:100%;
+    aspect-ratio:auto;
+
+    object-fit:cover;
+    object-position:center;
+  }
 
   .final-polaroid figcaption{
-    font-size:.65rem;
-    margin-top:3px;
-  }
+    left:5px;
+    right:5px;
+    bottom:2px;
 
+    font-size:.60rem;
+    min-height:10px;
+  }
 
   .final-polaroid::after{
-    width:40px;
-    height:14px;
-    top:-7px;
+    width:38px;
+    height:13px;
+    top:-6px;
   }
 
-
-  /*
-     Compact lower message area.
-  */
   #final-copy{
     width:94vw;
-
     min-height:27%;
-
     bottom:1%;
 
     padding:
-      6px
+      4px
       8px
-      4px;
+      3px;
   }
-
 
   #final-copy h1{
     font-size:clamp(1.85rem,8vw,2.6rem);
@@ -623,25 +678,40 @@ a{ color:inherit; }
     margin-bottom:2px;
   }
 
-
   #final-copy h2{
     font-size:clamp(1.65rem,7vw,2.3rem);
     line-height:1.02;
     margin-bottom:5px;
   }
 
-
   #final-copy .meta{
     font-size:.70rem;
     margin-bottom:3px;
   }
-
 
   #final-copy .quiet{
     font-size:.92rem;
     line-height:1.25;
     max-width:380px;
     margin-top:5px;
+  }
+}
+
+/* Very short mobile screens: give the collage a little more room
+   while keeping the message compact. */
+@media (max-width:700px) and (max-height:760px){
+  #final-collage{
+    height:72vh;
+    row-gap:5px;
+    padding-top:6px;
+  }
+
+  #final-copy{
+    min-height:25%;
+  }
+
+  .final-polaroid{
+    padding-bottom:14px;
   }
 }
 
@@ -1491,6 +1561,7 @@ function randomBetween(min, max){
 
 function createFinalCollage(){
   if(!finalCollage) return;
+
   finalCollage.innerHTML = '';
 
   const photos = (CONFIG.final && Array.isArray(CONFIG.final.collage))
@@ -1499,121 +1570,26 @@ function createFinalCollage(){
 
   if(!photos.length) return;
 
-  const box = finalCollage.getBoundingClientRect();
-  const collageWidth = Math.max(box.width, 280);
-  const collageHeight = Math.max(box.height, 220);
-  const wide = collageWidth / Math.max(collageHeight, 1) > 1.45;
-  const mobile = window.innerWidth <= 700 || collageWidth < 560;
-
-  // Slightly enlarge the collage cards without letting them consume the whole
-  // viewport or spill into the lower message band. Use a smaller responsive gap
-  // to preserve the airy composition while still allowing a 10–20% size bump.
-  const cols = wide ? 3 : 2;
-const rows = Math.ceil(photos.length / cols);
-
-
-/*
-   MOBILE:
-   Use almost the entire width of the phone for the
-   two-column photo grid.
-
-   DESKTOP:
-   Keep the original airy spacing.
-*/
-const gap = mobile ? 5 : 12;
-
-
-/*
-   Mobile cards get a controlled size boost.
-*/
-const sizeBoost = mobile ? 1.04 : 1.08;
-
-const widthBudget = collageWidth - (cols + 1) * gap;
-const heightBudget = collageHeight - (rows + 1) * gap;
-
-
-/*
-   On mobile, width should be the primary constraint.
-
-   This is important because the phone is narrow:
-   we want each photo to use as much of each column
-   as possible rather than shrinking them unnecessarily.
-*/
-const baseCardWidth = mobile
-  ? widthBudget / cols
-  : Math.min(
-      widthBudget / cols,
-      heightBudget / rows / 1.25
-    );
-
-
-/*
-   Final card width.
-
-   Mobile:
-   nearly the entire two-column width.
-
-   Desktop:
-   retain the original behavior.
-*/
-const cardWidth = mobile
-  ? Math.min(
-      baseCardWidth * sizeBoost,
-      (collageWidth - 3 * gap) / 2
-    )
-  : Math.min(
-      baseCardWidth * sizeBoost,
-      (collageWidth / cols) * 0.92
-    );
-
-
-const cardHeight = cardWidth * 1.25;
-
-
-const gridWidth =
-  cols * cardWidth +
-  (cols - 1) * gap;
-
-
-const gridHeight =
-  rows * cardHeight +
-  (rows - 1) * gap;
-
-
-/*
-   Center horizontally.
-*/
-const startX =
-  Math.max(
-    gap,
-    (collageWidth - gridWidth) / 2
-  );
-
-
-/*
-   IMPORTANT DIFFERENCE:
-
-   Desktop:
-   vertically center the grid.
-
-   Mobile:
-   start the grid near the top so we don't waste
-   the large empty area underneath the third row.
-*/
-const startY = mobile
-  ? 8
-  : Math.max(
-      gap,
-      (collageHeight - gridHeight) / 2
-    ) - 6;
+  /*
+     CSS Grid is now responsible for all sizing and positioning.
+     JavaScript only creates the six permanent photo slots.
+     This prevents mobile overlap/clipping when the viewport changes.
+  */
 
   photos.forEach(function(p, i){
     const fig = document.createElement('figure');
     fig.className = 'final-polaroid';
-    fig.style.width = Math.round(cardWidth) + 'px';
-    fig.style.height = Math.round(cardHeight) + 'px';
     fig.style.zIndex = String(10 + i);
-    fig.dataset.rotation = randomBetween(-7, 7).toFixed(1);
+
+    /*
+       Keep the scrapbook feel, but use a much smaller rotation
+       on mobile so large cards don't visually collide.
+    */
+    const mobile = window.innerWidth <= 700;
+    fig.dataset.rotation = randomBetween(
+      mobile ? -2.8 : -5.5,
+      mobile ? 2.8 : 5.5
+    ).toFixed(1);
 
     const imgSrc = p && p.src ? p.src : '';
     const caption = p && p.caption ? p.caption : '';
@@ -1623,9 +1599,11 @@ const startY = mobile
       img.src = imgSrc;
       img.alt = caption || 'A memory';
       img.loading = 'eager';
+
       img.onerror = function(){
         img.replaceWith(makePhotoSlot());
       };
+
       fig.appendChild(img);
     } else {
       fig.appendChild(makePhotoSlot());
@@ -1633,13 +1611,8 @@ const startY = mobile
 
     const cap = document.createElement('figcaption');
     cap.textContent = caption;
+
     fig.appendChild(cap);
-
-    const col = i % cols;
-    const row = Math.floor(i / cols);
-    fig.style.left = Math.round(startX + col * (cardWidth + gap)) + 'px';
-    fig.style.top = Math.round(startY + row * (cardHeight + gap)) + 'px';
-
     finalCollage.appendChild(fig);
   });
 }
