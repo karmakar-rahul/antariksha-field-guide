@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Antariksha Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Patrick+Hand&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CONFIG-DRIVEN VISUAL SYSTEM — see JS CONFIG block for asset paths
+   ============================================================ */
+:root{
+  --paper:        #FBF3E2;
+  --paper-dark:   #F1E4C8;
+  --ink:          #3B2A20;
+  --ink-soft:     #6B5744;
+  --sunflower:    #F0B22E;
+  --sunflower-2:  #D68A1E;
+  --terracotta:   #B4522E;
+  --clay:         #8C4A34;
+  --sage:         #6E7A55;
+  --latte:        #C8A27A;
+  --shadow:       rgba(59,40,25,0.22);
+  --gutter: clamp(20px, 5vw, 64px);
+}
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  margin:0;
+  background:var(--paper);
+  background-image:
+    radial-gradient(ellipse at 15% 8%, rgba(240,178,46,0.10), transparent 45%),
+    radial-gradient(ellipse at 85% 92%, rgba(180,82,46,0.08), transparent 45%);
+  color:var(--ink);
+  font-family:'Source Serif 4', serif;
+  position:relative;
+  overflow-x:hidden;
+}
+h1,h2,h3,.script{ font-family:'Caveat', cursive; font-weight:700; margin:0; }
+.hand{ font-family:'Patrick Hand', cursive; }
+.meta{ font-family:'Space Mono', monospace; letter-spacing:.03em; }
+img{ max-width:100%; display:block; }
+button{ font-family:inherit; }
+a{ color:inherit; }
+
+.grain{
+  position:fixed; inset:0; pointer-events:none; z-index:2; opacity:.05; mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   NAVIGATION — journal index
+   ============================================================ */
+#progress-rail{ position:fixed; top:0; left:0; width:3px; height:100%; z-index:1000; pointer-events:none; }
+#progress-fill{ width:100%; background:var(--terracotta); height:0%; transition:height .1s linear; }
+#index-toggle{
+  position:fixed; top:22px; right:22px; z-index:999;
+  width:52px; height:52px; border-radius:50%;
+  background:var(--paper); border:1.5px solid var(--ink);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; box-shadow:2px 3px 0 var(--shadow);
+  font-family:'Caveat',cursive; font-size:1.5rem; color:var(--ink);
+}
+#index-toggle:focus-visible, .btn:focus-visible, .desk-obj:focus-visible, .fg-mark:focus-visible{
+  outline:3px solid var(--sage); outline-offset:2px;
+}
+#index-panel{
+  position:fixed; top:84px; right:22px; z-index:998; width:min(280px, 80vw);
+  background:var(--paper); border:1.5px solid var(--ink); border-radius:4px;
+  box-shadow:5px 6px 0 var(--shadow);
+  padding:18px 8px 18px 20px; display:none; max-height:70vh; overflow-y:auto;
+}
+#index-panel.open{ display:block; }
+#index-panel .script{ font-size:1.3rem; margin-bottom:8px; display:block; }
+#index-panel ol{ list-style:none; margin:0; padding:0; counter-reset:idx; }
+#index-panel li{ counter-increment:idx; margin-bottom:2px; }
+#index-panel a{
+  text-decoration:none; font-family:'Patrick Hand',cursive; font-size:1.05rem;
+  display:flex; gap:8px; padding:6px 8px; border-radius:3px; color:var(--ink-soft);
+}
+#index-panel a::before{ content: counter(idx, decimal-leading-zero) " —"; color:var(--terracotta); font-family:'Space Mono',monospace; font-size:.78rem; }
+#index-panel a:hover{ background:var(--paper-dark); color:var(--ink); }
+
+/* ============================================================
+   PAGE / CHAPTER SHELL — editorial, asymmetric composition
+   ============================================================ */
+.page{
+  position:relative; min-height:100vh; min-height:100dvh;
+  padding: clamp(56px, 10vh, 90px) var(--gutter) clamp(40px, 8vh, 70px);
+  display:flex; align-items:center; align-items:safe center; isolation:isolate;
+}
+.page-inner{ width:100%; max-width:1180px; margin:0 auto; position:relative; }
+.field-label{ font-family:'Space Mono',monospace; font-size:.72rem; letter-spacing:.12em; color:var(--clay); margin-bottom:6px; display:inline-block; }
+.chapter-reveal{ opacity:0; transform:translateY(36px) rotate(-.6deg); transition:opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); }
+.chapter-reveal.visible{ opacity:1; transform:translateY(0) rotate(0deg); }
+
+.art-frame{ position:relative; background:var(--paper); border:1px solid rgba(59,40,25,.25); padding:10px; box-shadow:0 10px 26px var(--shadow); }
+.art-frame img{ width:100%; height:100%; object-fit:cover; display:block; }
+.art-frame figcaption{ font-family:'Patrick Hand',cursive; font-size:.92rem; color:var(--ink-soft); margin-top:8px; text-align:center; }
+.chapter7-photo{
+  padding:0; background:var(--paper); border:1px solid rgba(59,40,25,.25); box-shadow:0 10px 26px var(--shadow);
+}
+.chapter7-photo img{ width:100%; display:block; height:auto; object-fit:cover; }
+.chapter7-photo figcaption{
+  margin:0; padding:10px 12px 11px; text-align:center; color:var(--ink-soft);
+  font-family:'Patrick Hand',cursive; font-size:.8rem; background:rgba(251,243,226,.70);
+  border-top:1px solid rgba(59,40,25,.18);
+}
+.art-tape{
+  position:absolute; width:70px; height:24px; background:rgba(240,178,46,.35);
+  border:1px solid rgba(59,40,25,.15); top:-12px; left:50%; transform:translateX(-50%) rotate(-3deg);
+  box-shadow:0 2px 4px rgba(0,0,0,.1);
+}
+.art-pending{
+  width:100%; height:100%; min-height:220px; display:flex; align-items:center; justify-content:center;
+  background:repeating-linear-gradient(135deg, var(--paper) 0 12px, var(--paper-dark) 12px 24px);
+  color:var(--clay); font-family:'Patrick Hand',cursive; font-size:1rem; text-align:center; padding:20px;
+  border:1px dashed var(--clay);
+}
+.annotation{ font-family:'Patrick Hand',cursive; font-size:1rem; color:var(--clay); position:relative; display:inline-block; }
+.annotation::before{ content:"— "; }
+
+.btn{
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'Patrick Hand',cursive; font-size:1.15rem;
+  background:var(--sunflower); color:var(--ink);
+  border:1.5px solid var(--ink); padding:10px 22px; border-radius:3px;
+  cursor:pointer; box-shadow:3px 3px 0 var(--ink);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.btn:hover{ transform:translate(-2px,-2px); box-shadow:5px 5px 0 var(--ink); }
+.btn:active{ transform:translate(0,0); box-shadow:1px 1px 0 var(--ink); }
+
+.stamp{
+  display:inline-block; font-family:'Space Mono',monospace; font-size:.7rem; letter-spacing:.08em;
+  border:1.5px solid var(--terracotta); color:var(--terracotta); padding:3px 8px; border-radius:2px;
+  transform:rotate(-2deg);
+}
+
+.toast{
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(16px);
+  background:var(--ink); color:var(--paper); padding:14px 22px; border-radius:6px;
+  font-family:'Patrick Hand',cursive; font-size:1.05rem; z-index:1200; opacity:0; pointer-events:none;
+  transition:all .35s ease; max-width:min(420px,84vw); text-align:center; box-shadow:0 10px 24px rgba(0,0,0,.35);
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+
+/* CHAPTER 01 */
+#ch1{ align-items:center; justify-content:center; }
+#ch1 .page-inner{ display:grid; grid-template-columns:1fr; justify-items:center; text-align:center; gap:4px; max-width:640px; }
+#sunflower-stage{ width:220px; height:280px; position:relative; margin:8px auto 4px; }
+#sunflower-stage svg{ width:100%; height:100%; overflow:visible; cursor:pointer; }
+.sf-part{ transform-origin:center; opacity:0; transition:opacity .6s ease, transform .6s ease; }
+.sf-part.grown{ opacity:1; }
+#sf-head{ transform-box:fill-box; transform-origin:50% 100%; }
+#ch1-lines .type-line{ display:block; font-family:'Patrick Hand',cursive; font-size:1.3rem; opacity:0; transform:translateY(10px); transition:all .7s ease; margin:2px 0; }
+#ch1-lines .type-line.visible{ opacity:1; transform:translateY(0); }
+.cover-date{ font-family:'Space Mono',monospace; font-size:2.2rem; color:var(--terracotta); margin:10px 0; opacity:0; transition:opacity .7s ease; }
+.cover-date.visible{ opacity:1; }
+#enter-btn{ opacity:0; transition:opacity .7s ease; }
+#enter-btn.visible{ opacity:1; }
+#date-status{ font-family:'Space Mono',monospace; font-size:.7rem; color:var(--clay); margin-top:22px; }
+.field-note-tag{ font-family:'Space Mono',monospace; font-size:.7rem; color:var(--clay); border:1px solid var(--clay); border-radius:2px; padding:2px 8px; display:inline-block; margin-bottom:10px; }
+
+/* CHAPTER 02 */
+#ch2 .page-inner{ display:grid; grid-template-columns:1fr 1.15fr; gap:clamp(24px,5vh,48px); align-items:center; text-align:left; }
+#ch2 .art-frame{ transform:rotate(-2deg); }
+.memory-timeline{ position:relative; padding-left:22px; border-left:2px dotted var(--clay); }
+.mt-item{ position:relative; padding:clamp(3px,0.8vh,6px) 0 clamp(3px,0.8vh,6px) 18px; font-family:'Patrick Hand',cursive; font-size:1.15rem; }
+.mt-item::before{ content:""; position:absolute; left:-27px; top:14px; width:9px; height:9px; border-radius:50%; background:var(--sunflower-2); border:1px solid var(--ink); }
+.mt-item.emph{ color:var(--terracotta); font-size:1.25rem; }
+@media (max-width:820px){ #ch2 .page-inner{ grid-template-columns:1fr; } }
+
+/* CHAPTER 03 */
+#ch3 .page-inner{ display:grid; grid-template-columns:0.95fr 1.2fr; gap:clamp(20px,4vh,36px); align-items:start; text-align:left; }
+.specimen-portrait{ position:sticky; top:clamp(20px,5vh,90px); }
+.fg-labels{ display:flex; flex-direction:column; gap:16px; }
+.fg-mark{ position:relative; padding:10px 0 10px 26px; border-bottom:1px dashed rgba(59,40,25,.25); cursor:pointer; background:none; border-left:none; border-right:none; border-top:none; text-align:left; width:100%; }
+.fg-mark::before{ content:"✦"; position:absolute; left:0; top:10px; color:var(--sunflower-2); }
+.fg-mark h3{ font-size:1.4rem; color:var(--terracotta); display:inline; }
+.fg-mark .fg-body{ font-family:'Patrick Hand',cursive; font-size:1.05rem; margin-top:4px; color:var(--ink-soft); }
+.fg-mark .fg-extra{ max-height:0; overflow:hidden; transition:max-height .4s ease; font-family:'Space Mono',monospace; font-size:.82rem; color:var(--clay); margin-top:4px; }
+.fg-mark.open .fg-extra{ max-height:120px; }
+.rarity-flowers{ font-size:1.1rem; letter-spacing:2px; color:var(--sunflower-2); }
+@media (max-width:820px){ #ch3 .page-inner{ grid-template-columns:1fr; } .specimen-portrait{ position:static; } }
+
+/* CHAPTER 04 */
+#ch4 .page-inner{ text-align:left; }
+.desk-surface{
+  position:relative; background:var(--paper-dark); border:1px solid rgba(59,40,25,.2);
+  border-radius:6px; padding:clamp(18px,4vh,36px) 20px; min-height:min(340px, 42vh); box-shadow:inset 0 2px 10px rgba(0,0,0,.06);
+  display:grid; grid-template-columns:repeat(4,1fr); gap:18px; align-items:center;
+}
+.desk-obj{
+  background:var(--paper); border:1px solid rgba(59,40,25,.3); border-radius:6px;
+  padding:14px 10px; text-align:center; cursor:pointer; box-shadow:2px 3px 0 rgba(59,40,25,.18);
+  font-size:1.9rem; transition:transform .18s ease;
+}
+.desk-obj:nth-child(odd){ transform:rotate(-2deg); }
+.desk-obj:nth-child(even){ transform:rotate(2deg); }
+.desk-obj:hover{ transform:scale(1.08) rotate(0deg); z-index:2; }
+.desk-obj .obj-label{ display:block; font-family:'Space Mono',monospace; font-size:.6rem; color:var(--clay); margin-top:4px; }
+#desk-note{ margin-top:20px; font-family:'Patrick Hand',cursive; font-size:1.2rem; min-height:60px; border-left:3px solid var(--terracotta); padding-left:16px; }
+@media (max-width:720px){ .desk-surface{ grid-template-columns:repeat(3,1fr); padding:18px 14px; } .desk-obj{ padding:10px 6px; font-size:1.5rem; } }
+@media (max-width:480px){ .desk-surface{ grid-template-columns:repeat(2,1fr); } }
+
+/* CHAPTER 05 */
+#ch5 .page-inner{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(20px,4vh,40px); align-items:start; text-align:left; }
+.dossier{ background:var(--paper); border:1px solid rgba(59,40,25,.3); padding:clamp(16px,3vh,26px) 24px; position:relative; box-shadow:0 8px 22px var(--shadow); }
+.dossier::before{
+  content:"CONFIDENTIAL"; position:absolute; top:14px; right:-30px; transform:rotate(35deg);
+  font-family:'Space Mono',monospace; font-size:.6rem; letter-spacing:.1em; color:var(--terracotta);
+  border:1px solid var(--terracotta); padding:2px 24px; opacity:.7;
+}
+.dossier dl{ display:grid; grid-template-columns:auto 1fr; gap:6px 14px; font-family:'Space Mono',monospace; font-size:.82rem; }
+.dossier dt{ color:var(--clay); }
+.dossier dd{ margin:0; color:var(--ink); }
+#zeher-notes{ margin-top:16px; min-height:150px; }
+.zeher-line{ font-family:'Patrick Hand',cursive; font-size:1.05rem; opacity:0; transform:translateX(-8px); transition:all .4s ease; margin:4px 0; padding-left:14px; border-left:2px solid var(--sunflower-2); }
+.zeher-line.show{ opacity:1; transform:translateX(0); }
+.zeher-rule{ margin-top:14px; padding:12px; background:var(--paper-dark); border-radius:4px; font-family:'Patrick Hand',cursive; }
+@media (max-width:820px){ #ch5 .page-inner{ grid-template-columns:1fr; } }
+
+/* CHAPTER 06 */
+#ch6 .page-inner{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(20px,4vh,40px); align-items:center; text-align:left; }
+.case-flow{ font-family:'Space Mono',monospace; font-size:.95rem; line-height:2.1; }
+.case-flow .hit{ color:var(--terracotta); font-weight:bold; }
+.donut-trigger{ font-size:2.6rem; cursor:pointer; display:inline-block; margin-top:6px; transition:transform .2s; }
+.donut-trigger:hover{ transform:scale(1.15) rotate(10deg); }
+#donut-reveal{ margin-top:14px; font-family:'Patrick Hand',cursive; font-size:1.1rem; display:none; }
+.case-status{ display:flex; gap:16px; margin-top:14px; font-family:'Space Mono',monospace; font-size:.72rem; flex-wrap:wrap; }
+.case-status span{ border:1px solid var(--clay); padding:3px 8px; border-radius:2px; }
+@media (max-width:820px){ #ch6 .page-inner{ grid-template-columns:1fr; } }
+
+/* CHAPTER 07 */
+#ch7{ background:linear-gradient(180deg, var(--paper), var(--paper-dark)); }
+#ch7 .page-inner{ max-width:680px; text-align:left; }
+.quiet-line{ font-family:'Patrick Hand',cursive; font-size:1.3rem; margin:clamp(5px,1vh,10px) 0; }
+.roles-list{ display:flex; flex-wrap:wrap; gap:clamp(6px,1vh,10px) 18px; margin:clamp(10px,2vh,20px) 0; font-family:'Space Mono',monospace; font-size:.82rem; }
+.roles-list span{ border-bottom:1px dotted var(--clay); padding-bottom:2px; }
+.roles-list span::after{ content:" ✓"; color:var(--sage); }
+.emph-block{ border-left:3px solid var(--terracotta); padding-left:18px; margin-top:clamp(10px,2vh,18px); }
+.emph-block p{ font-family:'Patrick Hand',cursive; font-size:1.2rem; margin:clamp(3px,0.8vh,6px) 0; }
+
+/* CHAPTER 08 */
+#ch8 .page-inner{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(20px,4vh,40px); align-items:start; text-align:left; }
+.photo-strip{ display:flex; gap:18px; flex-wrap:wrap; }
+.photo-tape{ position:relative; width:180px; background:var(--paper); padding:8px 8px 26px; box-shadow:3px 4px 10px var(--shadow); }
+@media (max-width:480px){ .photo-tape{ width:min(180px, 40vw); } }
+.photo-tape:nth-child(odd){ transform:rotate(-3deg); }
+.photo-tape:nth-child(even){ transform:rotate(2deg); }
+.photo-tape .tape-strip{ position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(-2deg); width:54px; height:18px; background:rgba(240,178,46,.4); border:1px solid rgba(59,40,25,.15); }
+.photo-tape figcaption{ font-family:'Patrick Hand',cursive; font-size:.8rem; text-align:center; margin-top:6px; color:var(--ink-soft); }
+@media (max-width:820px){ #ch8 .page-inner{ grid-template-columns:1fr; } }
+
+/* CHAPTER 09 */
+#ch9 .page-inner{ max-width:640px; text-align:center; }
+#envelope-wrap{ position:relative; width:260px; height:170px; margin:clamp(10px,2vh,20px) auto; perspective:900px; }
+@media (max-width:380px){ #envelope-wrap{ transform:scale(0.82); margin-top:0; margin-bottom:0; } }
+#envelope-body{ position:absolute; inset:0; background:var(--latte); border-radius:4px; box-shadow:0 12px 26px var(--shadow); transition:transform .3s ease; }
+#envelope-wrap:hover #envelope-body{ transform:translateY(-4px); }
+.env-flap{
+  position:absolute; top:0; left:0; width:0; height:0;
+  border-left:130px solid transparent; border-right:130px solid transparent; border-top:85px solid var(--clay);
+  transform-origin:top center; transition:transform .6s cubic-bezier(.3,.7,.3,1);
+}
+.env-flap.opened{ transform:rotateX(150deg); }
+.wax-seal{
+  position:absolute; top:52%; left:50%; transform:translate(-50%,-50%);
+  width:44px; height:44px; border-radius:50%; background:var(--terracotta); color:var(--paper);
+  display:flex; align-items:center; justify-content:center; font-size:1.2rem; cursor:pointer;
+  box-shadow:0 3px 8px rgba(0,0,0,.35); z-index:3; transition:transform .2s;
+}
+.wax-seal:hover{ transform:translate(-50%,-50%) scale(1.08); }
+.wax-seal.broken{ opacity:0; pointer-events:none; }
+#letter-sheet{
+  max-width:600px; margin:20px auto 0; background:var(--paper); border-radius:4px; padding:34px 30px;
+  box-shadow:0 16px 40px var(--shadow); text-align:left; font-family:'Patrick Hand',cursive; font-size:1.12rem;
+  line-height:1.75; white-space:pre-wrap;
+  max-height:0; overflow:hidden; opacity:0; transform:scaleY(.9);
+  transition:max-height .8s ease, opacity .6s ease .2s, transform .8s ease;
+}
+#letter-sheet.open{ max-height:2400px; opacity:1; transform:scaleY(1); }
+
+/* FINAL — static wallpaper + controlled upper collage / lower message */
+#final{
+  position:relative; min-height:100vh; overflow:hidden; display:flex; align-items:center; justify-content:center;
+  background-color:var(--paper-dark);
+  background-repeat:no-repeat; background-position:center; background-size:cover;
+}
+#final::before{
+  content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:rgba(251,243,226,.22);
+}
+#final .final-wallpaper{
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-position:center; background-size:cover; background-repeat:no-repeat;
+  opacity:.40;
+  filter:brightness(.60) saturate(.96);
+}
+#final .final-vignette{
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:radial-gradient(circle at center, transparent 35%, rgba(35,24,17,.18) 100%);
+}
+#final-sparkles{
+  position:absolute; inset:0; z-index:2; pointer-events:none; overflow:hidden;
+}
+.final-sparkle{
+  position:absolute; width:6px; height:6px; border-radius:50%;
+  background:rgba(255,248,226,.98); box-shadow:0 0 12px rgba(255,248,226,1);
+  animation:final-sparkle-drift 3.8s ease-in-out infinite;
+}
+@keyframes final-sparkle-drift{
+  0%,100%{ opacity:.35; transform:translateY(8px) scale(.75); }
+  50%{ opacity:1; transform:translateY(-8px) scale(1.15); }
+}
+
+/* Photos live only in the upper ~58% of the canvas. */
+#final-collage{
+  position:absolute; top:0; left:0; width:100%; height:clamp(290px,62vh,440px);
+  z-index:3; pointer-events:none; overflow:hidden;
+}
+.final-polaroid{
+  position:absolute; width:clamp(150px,14vw,210px);
+  padding:8px 8px 26px; margin:0;
+  background:#fffdf7; border:1px solid rgba(59,40,25,.18);
+  box-shadow:0 10px 22px rgba(35,24,17,.30),0 2px 4px rgba(35,24,17,.16);
+  opacity:0;
+  transform:translateY(28px) scale(.92) rotate(0deg);
+  transition:opacity .8s ease,transform 1s cubic-bezier(.2,.8,.2,1);
+}
+.final-polaroid.show{ opacity:1; }
+.final-polaroid img,.final-polaroid .photo-slot{
+  width:100%; aspect-ratio:4/5; object-fit:cover; display:block;
+}
+.final-polaroid .photo-slot{
+  display:flex; align-items:center; justify-content:center;
+  background:repeating-linear-gradient(135deg,var(--paper) 0 12px,var(--paper-dark) 12px 24px);
+  border:1px dashed var(--clay); color:var(--clay);
+  font-family:'Patrick Hand',cursive; font-size:.82rem;
+  text-align:center; padding:10px;
+}
+.final-polaroid figcaption{
+  margin-top:6px; min-height:12px; text-align:center;
+  color:var(--ink-soft); font-family:'Patrick Hand',cursive; font-size:.78rem;
+}
+.final-polaroid::after{
+  content:""; position:absolute; top:-10px; left:50%;
+  width:52px; height:18px; transform:translateX(-50%) rotate(-2deg);
+  background:rgba(240,178,46,.34);
+  border:1px solid rgba(59,40,25,.10);
+  box-shadow:0 2px 4px rgba(0,0,0,.08);
+}
+
+/* The message owns the lower-middle band, separate from the collage. */
+#final-copy{
+  position:absolute; left:50%; bottom:5%; transform:translateX(-50%);
+  z-index:5; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; color:#fff8e2;
+  width:min(760px,76vw); min-height:24%;
+  padding:clamp(18px,3vh,34px) clamp(18px,3vw,40px);
+  background:transparent; border:none;
+  text-shadow:0 3px 14px rgba(0,0,0,.55);
+  opacity:0; transition:opacity 1.4s ease;
+}
+#final-copy.show{ opacity:1; }
+#final-copy h1{ font-size:clamp(2.2rem,5.5vw,3.5rem); line-height:1.05; margin:0 0 4px; }
+#final-copy h2{ font-size:clamp(1.9rem,4.7vw,3rem); line-height:1.1; margin:0 0 10px; }
+#final-copy .meta{ font-size:.82rem; opacity:.88; margin:0 0 8px; }
+#final-copy .quiet{
+  font-family:'Patrick Hand',cursive; font-size:clamp(1.05rem,1.9vw,1.3rem);
+  line-height:1.4; max-width:560px; margin:10px auto 0;
+}
+
+@media (max-width:700px){
+  #final-collage{ height:clamp(230px,56vh,340px); }
+  .final-polaroid{ width:clamp(108px,30vw,150px); padding:6px 6px 20px; }
+  .final-polaroid figcaption{ font-size:.7rem; margin-top:4px; }
+  .final-polaroid::after{ width:42px; height:15px; top:-8px; }
+  #final-copy{ width:90vw; min-height:37%; bottom:2%; padding-left:14px; padding-right:14px; }
+  #final-copy h1{ font-size:clamp(1.9rem,8vw,2.7rem); }
+  #final-copy h2{ font-size:clamp(1.7rem,7vw,2.35rem); }
+  #final-copy .quiet{ font-size:1rem; max-width:420px; }
+}
+
+.music-toggle{
+  position:fixed; bottom:22px; right:22px; z-index:999; width:48px; height:48px; border-radius:50%;
+  background:var(--paper); border:1.5px solid var(--ink); display:flex; align-items:center; justify-content:center;
+  cursor:pointer; box-shadow:2px 3px 0 var(--shadow); font-size:1.15rem;
+}
+
+/* ============================================================
+   CHAPTER ATMOSPHERIC BACKGROUNDS
+   Backgrounds are applied by JS (CONFIG.backgrounds) directly onto
+   the .page element as a soft, paper-tinted overlay image. Missing
+   assets simply leave the base paper color in place — see loadChapterBackgrounds().
+   ============================================================ */
+.page.has-bg{ background-repeat:no-repeat; }
+
+/* Next-chapter control at the foot of each page */
+.next-chapter{ margin-top:clamp(14px,3vh,34px); display:flex; }
+.next-chapter .btn{ font-size:1.1rem; }
+
+/* ============================================================
+   PHYSICAL PAGE-TURN TRANSITION
+   A fixed sheet of "paper" that rotates around a hinge (left or
+   right edge) using CSS 3D, covering the viewport, jumping the
+   scroll position while covered, then continuing its rotation to
+   reveal the destination chapter underneath.
+   ============================================================ */
+#page-turn-overlay{
+  position:fixed; inset:0; z-index:2000; pointer-events:none;
+  perspective:2400px; display:none;
+}
+#page-turn-overlay.active{ display:block; pointer-events:auto; }
+#paper-sheet{
+  position:absolute; inset:0;
+  transform-style:preserve-3d;
+  transform:rotateY(90deg);
+  transform-origin:left center;
+  will-change:transform;
+}
+.sheet-face{
+  position:absolute; inset:0;
+  backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  background:var(--paper);
+  background-image:
+    linear-gradient(90deg, rgba(59,40,25,.22), transparent 10%, transparent 90%, rgba(59,40,25,.22)),
+    repeating-linear-gradient(180deg, rgba(59,40,25,.02) 0 2px, transparent 2px 4px);
+  box-shadow:inset 0 0 90px rgba(59,40,25,.14);
+  display:flex; flex-direction:column; align-items:flex-start; justify-content:center;
+  padding:clamp(24px,6vw,70px); gap:6px;
+}
+.sheet-face.back{ transform:rotateY(180deg); background:var(--paper-dark); }
+.sheet-face .ptf-eyebrow{ font-family:'Space Mono',monospace; font-size:.72rem; letter-spacing:.12em; color:var(--clay); }
+.sheet-face .ptf-title{ font-family:'Caveat',cursive; font-size:2.1rem; color:var(--terracotta); }
+
+/* ============================================================
+   STATIC CHAPTER PANELS — no page-level scrolling.
+   Each chapter (and the final scene) is a fixed full-viewport
+   panel; only the ".active" one is shown. The only way to move
+   between them is a deliberate button/index click that runs
+   pageTurnTo(), never scroll or swipe. A panel's own content may
+   still scroll internally if it's taller than the viewport, but
+   that never advances the journal.
+   ============================================================ */
+html, body{ height:100%; overflow:hidden; scroll-behavior:auto; }
+.page, #final{
+  position:fixed; inset:0; width:100%; height:100vh; height:100dvh;
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+  display:none;
+}
+.page.active, #final.active{ display:flex; }
+#final.active{ align-items:center; justify-content:center; }
+
+/* Short/landscape viewports (phones in landscape, small laptops) —
+   trim the tallest fixed-size elements so every chapter still fits
+   comfortably without needing to scroll internally. */
+@media (max-height:680px){
+  #sunflower-stage{ width:160px; height:200px; }
+  #ch1-lines .type-line{ font-size:1.05rem; }
+  .cover-date{ font-size:1.6rem; margin:6px 0; }
+  #date-status{ margin-top:10px; }
+  .art-pending{ min-height:120px; }
+  #letter-sheet{ padding:20px 18px; font-size:1rem; }
+  .desk-surface{ min-height:auto; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation:none !important; transition:none !important; }
+  .chapter-reveal{ opacity:1 !important; transform:none !important; }
+  .final-polaroid{ opacity:1 !important; transform:none !important; }
+  #final-copy{ opacity:1 !important; }
+  #page-turn-overlay{ display:none !important; }
+}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div id="progress-rail"><div id="progress-fill"></div></div>
+
+<div id="index-toggle" onclick="toggleIndex()" role="button" aria-label="Open journal index" tabindex="0">☰</div>
+<nav id="index-panel" aria-label="Journal index">
+  <span class="script">Journal Index</span>
+  <ol id="index-list"></ol>
+</nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="music-toggle" id="music-toggle" onclick="toggleMusic()" title="Toggle ambient music" aria-label="Toggle music">🔇</div>
+
+<!-- CHAPTER 01 — THE SUNFLOWER (cover / first page) -->
+<section class="page" id="ch1">
+  <div class="page-inner">
+    <span class="field-note-tag">A special note for you :)</span>
+    <div id="sunflower-stage">
+      <svg viewBox="0 0 200 260" id="sunflower-svg" role="img" aria-label="An illustrated sunflower that grows into bloom" tabindex="0">
+        <path class="sf-part" id="sf-stem" d="M100 260 C 96 200, 104 160, 100 130" stroke="#5c7a3f" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path class="sf-part" id="sf-leaf1" d="M100 210 C 70 200, 55 175, 60 155 C 90 165, 100 190, 100 210 Z" fill="#6e8a4c"/>
+        <path class="sf-part" id="sf-leaf2" d="M100 175 C 130 168, 148 148, 145 128 C 115 135, 102 155, 100 175 Z" fill="#5c7a3f"/>
+        <g id="sf-head" class="sf-part">
+          <g id="sf-petals" fill="#F0B22E">
+            <ellipse cx="100" cy="55" rx="16" ry="34"/>
+            <ellipse cx="100" cy="55" rx="16" ry="34" transform="rotate(30 100 90)"/>
+            <ellipse cx="100" cy="55" rx="16" ry="34" transform="rotate(60 100 90)"/>
+            <ellipse cx="100" cy="55" rx="16" ry="34" transform="rotate(90 100 90)"/>
+            <ellipse cx="100" cy="55" rx="16" ry="34" transform="rotate(120 100 90)"/>
+            <ellipse cx="100" cy="55" rx="16" ry="34" transform="rotate(150 100 90)"/>
+            <ellipse cx="100" cy="55" rx="16" ry="34" transform="rotate(180 100 90)"/>
+            <ellipse cx="100" cy="55" rx="16" ry="34" transform="rotate(210 100 90)"/>
+            <ellipse cx="100" cy="55" rx="16" ry="34" transform="rotate(240 100 90)"/>
+            <ellipse cx="100" cy="55" rx="16" ry="34" transform="rotate(270 100 90)"/>
+            <ellipse cx="100" cy="55" rx="16" ry="34" transform="rotate(300 100 90)"/>
+            <ellipse cx="100" cy="55" rx="16" ry="34" transform="rotate(330 100 90)"/>
+          </g>
+          <circle cx="100" cy="90" r="30" fill="#8C4A34"/>
+          <circle cx="100" cy="90" r="30" fill="url(#seedPattern)" opacity="0.5"/>
+        </g>
+        <defs>
+          <pattern id="seedPattern" width="6" height="6" patternUnits="userSpaceOnUse">
+            <circle cx="3" cy="3" r="1" fill="#5c2f1f"/>
+          </pattern>
+        </defs>
+      </svg>
+    </div>
+    <div id="ch1-lines">
+      <span class="type-line" id="l1">There are some people who enter a room.</span>
+      <span class="type-line" id="l2">And then there are people who make the room brighter.</span>
+      <span class="type-line" id="l3">And YOU will always be the second kind!.</span>
+    </div>
+    <div class="cover-date" id="l4">24 / 09/ 2026</div>
+    <button class="btn" id="enter-btn" onclick="pageTurnTo('ch2')">Open your memory lane...</button>
+    <p id="date-status" class="meta"></p>
+  </div>
+</section>
+
+<!-- CHAPTER 02 — HOW THIS STARTED -->
+<section class="page" id="ch2">
+  <div class="page-inner chapter-reveal">
+    <figure class="art-frame">
+      <div class="art-tape"></div>
+      <img data-art="chapter2" alt="Illustration of a coaching-centre classroom, warm afternoon light" loading="lazy">
+      <figcaption class="annotation">2018, more or less like this</figcaption>
+    </figure>
+    <div>
+      <span class="field-label">chapter 02</span>
+      <h2 style="font-size:clamp(1.5rem, 4.5vw, 2.2rem);">How did this even happen?</h2>
+      <div class="memory-timeline">
+        <div class="mt-item">2018 — Potential Coaching Centre</div>
+        <div class="mt-item">A random doubt interaction</div>
+        <div class="mt-item">We Started talking</div>
+        <div class="mt-item">Big group of friends</div>
+        <div class="mt-item">Everyone slowly disappeared</div>
+        <div class="mt-item emph">Somehow, you didn't</div>
+        <div class="mt-item">2026, Still here.</div>
+      </div>
+      <p class="annotation" style="margin-top:clamp(8px,2vh,14px);">Funny how a random conversation from Class 11 turned into a never-ending friendship contract :)</p>
+      <div class="next-chapter"><button class="btn" onclick="pageTurnTo('ch3')">Next Chapter →</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 03 — THE FIELD GUIDE SPREAD -->
+<section class="page" id="ch3">
+  <div class="page-inner chapter-reveal">
+    <div class="specimen-portrait">
+      <span class="field-label">chapter 03</span>
+      <h2 style="font-size:clamp(1.5rem, 4.5vw, 2.2rem);">The Antariksha Guide :)</h2>
+      <p class="annotation">An entirely scientific study of one particular sunflower.</p>
+      <figure class="art-frame" style="margin-top:clamp(8px,2vh,14px);">
+        <img data-art="chapter3" alt="A symbolic botanical portrait representing Antariksha as a sunflower specimen" loading="lazy">
+        <figcaption>How her favourite people describe this particular sunflower...</figcaption>
+      </figure>
+    </div>
+    <div class="fg-labels">
+      <button class="fg-mark" onclick="this.classList.toggle('open')">
+        <h3>Species</h3>
+        <div class="fg-body">Antariksha Kashyap</div>
+        <div class="fg-extra">Genus: Sunflower. Field classification: rare, self-propelled.</div>
+      </button>
+      <button class="fg-mark" onclick="this.classList.toggle('open')">
+        <h3>Habitat</h3>
+        <div class="fg-body">Cafés, Art stores, Beaches, Mountains, Stationery shops, and anywhere interesting food can be found.</div>
+        <div class="fg-extra">Migratory pattern: unpredictable, reliably delightful.</div>
+      </button>
+      <button class="fg-mark" onclick="this.classList.toggle('open')">
+        <h3>Known Weaknesses</h3>
+        <div class="fg-body">Strawberries.</div>
+        <div class="fg-extra">See Case File 06.</div>
+      </button>
+      <button class="fg-mark" onclick="this.classList.toggle('open')">
+        <h3>Exception</h3>
+        <div class="fg-body">Krispy Kreme Strawberry donuts at Bangalore Airport.</div>
+        <div class="fg-extra">Science: defeated.</div>
+      </button>
+      <button class="fg-mark" onclick="this.classList.toggle('open')">
+        <h3>Special Abilities</h3>
+        <div class="fg-body">Making people feel seen · Finding interesting art · Painting · Unsolicited life advice · Fashion consultations · Being suspiciously radiant.</div>
+        <div class="fg-extra">Threat level: overpowered.</div>
+      </button>
+      <button class="fg-mark" onclick="this.classList.toggle('open')">
+        <h3>Rarity</h3>
+        <div class="fg-body rarity-flowers">✿ ✿ ✿ ✿ ✿</div>
+        <div class="fg-extra">Not currently available in stores.</div>
+      </button>
+      <button class="fg-mark" onclick="this.classList.toggle('open')">
+        <h3>Commonly Found With</h3>
+        <div class="fg-body">Coffee, tea, Stationery, Travel plans and approximately 47 ideas at once.</div>
+        <div class="fg-extra">Do not attempt to keep up. It is not possible.</div>
+      </button>
+      <div class="next-chapter"><button class="btn" onclick="pageTurnTo('ch4')">Next Chapter →</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 04 — THE DESK -->
+<section class="page" id="ch4">
+  <div class="page-inner chapter-reveal">
+    <span class="field-label">chapter 04</span>
+    <h2 style="font-size:clamp(1.5rem, 4.5vw, 2.2rem);">The things that make her "her"</h2>
+    <p class="annotation" style="margin-bottom:18px;">Everything on this desk has a reason for being here.</p>
+    <div class="desk-surface">
+      <div class="desk-obj" tabindex="0" onclick="deskNote('Fuel for adventures, questionable decisions and conversations that somehow last forever.')">☕<span class="obj-label">Coffee</span></div>
+      <div class="desk-obj" tabindex="0" onclick="deskNote('Aadraak wali chai, very comforting')">🍵<span class="obj-label">Chaii</span></div>
+      <div class="desk-obj" tabindex="0" onclick="deskNote('For someone who somehow finds interesting art styles everywhere.')">🖌️<span class="obj-label">Paint brush</span></div>
+      <div class="desk-obj" tabindex="0" onclick="deskNote('Premium stationery detected. Financial responsibility has left the building.')">🖊️<span class="obj-label">Pen</span></div>
+      <div class="desk-obj" tabindex="0" onclick="deskNote('A world of infinite creativity and beautiful memories')">📓<span class="obj-label">Journal</span></div>
+      <div class="desk-obj" tabindex="0" onclick="haikyuuClick()">🏐<span class="obj-label">Haikyuu!!</span></div>
+      <div class="desk-obj" tabindex="0" onclick="deskNote('You already know why this one is here:)')">🌻<span class="obj-label">Sunflower</span></div>
+      <div class="desk-obj" tabindex="0" onclick="deskNote('Because apparently sitting near a large body of water is therapeutic.')">🌊<span class="obj-label">beach</span></div>
+      <div class="desk-obj" tabindex="0" onclick="deskNote('For when the sunflower needs a change of scenery.')">🏔️<span class="obj-label">Mountains</span></div>
+      <div class="desk-obj" tabindex="0" onclick="deskNote('Trying comforting food and making cutesyyy faces :) ')">🍰<span class="obj-label">Bakery</span></div>
+      <div class="desk-obj" tabindex="0" onclick="strawberryEgg()">🍓<span class="obj-label">Strawberry</span></div>
+      <div class="desk-obj" tabindex="0" onclick="deskNote('The one exception to the entire strawberry rule. See Case File 06.')">🍩<span class="obj-label">Donut</span></div>
+    </div>
+    <div id="desk-note" class="annotation">Touch something on the desk to find out why it's there.</div>
+    <div class="next-chapter"><button class="btn" onclick="pageTurnTo('ch5')">Next Chapter →</button></div>
+  </div>
+</section>
+
+<!-- CHAPTER 05 — ZEHER RESEARCH DIVISION -->
+<section class="page" id="ch5">
+  <div class="page-inner chapter-reveal">
+    <div>
+      <span class="field-label">chapter 05</span>
+      <h2 style="font-size:clamp(1.5rem, 4.5vw, 2.2rem);">The ZEHER Archives</h2>
+      <p class="annotation">She and her roommates cook. Results are... variable.</p>
+      <figure class="art-frame" style="margin-top:clamp(8px,2vh,14px); max-width:340px;">
+        <img data-art="chapter5" alt="A whimsical illustration of an experimental kitchen dish under study" loading="lazy">
+        <figcaption>Specimen under review, origin unclear</figcaption>
+      </figure>
+    </div>
+    <div class="dossier">
+      <span class="stamp">ZEHER RESEARCH DIVISION</span>
+      <dl style="margin-top:clamp(8px,2vh,14px);">
+        <dt>Specimen</dt><dd>Unknown dish</dd>
+        <dt>Culinary stability</dt><dd>Unknown</dd>
+        <dt>Taste</dt><dd>Classified</dd>
+        <dt>Reproducibility</dt><dd>0%</dd>
+        <dt>Survival probability</dt><dd>???</dd>
+      </dl>
+      <button class="btn" style="margin-top:16px;" onclick="analyzeDish()">Analyze the Dish</button>
+      <div id="zeher-notes"></div>
+      <div class="zeher-rule" id="zeher-rule" style="display:none;">
+        <strong>Rule #1</strong><br>If it's good, appreciate it.<br>If it's bad, appreciate the trauma.<br>Either way, never make it again.
+      </div>
+      <div class="next-chapter"><button class="btn" onclick="pageTurnTo('ch6')">Next Chapter →</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 06 — THE STRAWBERRY PARADOX -->
+<section class="page" id="ch6">
+  <div class="page-inner chapter-reveal">
+    <div>
+      <span class="field-label">chapter 06</span>
+      <h2 style="font-size:clamp(1.5rem, 4.5vw, 2.2rem);">Case File 06 — The Strawberry Paradox</h2>
+      <div class="case-flow">
+        <div>STRAWBERRIES</div><div>↓</div><div class="hit">DISGUST</div><div>↓</div>
+        <div>EXCEPTION DETECTED</div><div>↓</div><div>KRISPY KREME</div><div>↓</div><div class="hit">STRAWBERRY DONUT</div>
+      </div>
+      <span class="donut-trigger" onclick="donutClick()" role="button" tabindex="0" aria-label="Reveal the paradox">🍩</span>
+      <div id="donut-reveal">
+        Scientists remain unable to explain this contradiction.<br><br>
+        Current hypothesis: Strawberry Donuts operate under different laws of physics.
+        <div class="case-status">
+          <span>STATUS: UNRESOLVED</span>
+          <span>CONFIDENCE: 100%</span>
+          <span>SCIENCE: DEFEATED</span>
+        </div>
+      </div>
+      <div class="next-chapter"><button class="btn" onclick="pageTurnTo('ch7')">Next Chapter →</button></div>
+    </div>
+    <figure class="art-frame">
+      <img data-art="chapter6" alt="A strawberry crossed out beside a glowing donut, illustrated in a case-file style" loading="lazy">
+      <figcaption>Exhibit A — the exception that broke the rule</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- CHAPTER 07 — THE SUPPORTING CHARACTER -->
+<section class="page" id="ch7">
+  <div class="page-inner chapter-reveal">
+    <span class="field-label">chapter 07</span>
+    <div style="display:flex; flex-wrap:wrap; gap:20px; margin:0 0 20px;">
+      <figure class="art-frame chapter7-photo" style="max-width:420px; margin:0;">
+        <img data-art="chapter7a" alt="A quiet café window at late afternoon, two cups, warm light" loading="lazy">
+        <figcaption>One fine Sunday afternoon!</figcaption>
+      </figure>
+      <figure class="art-frame chapter7-photo" style="max-width:420px; margin:0;">
+        <img data-art="chapter7b" alt="A quiet café window at late afternoon, two cups, warm light" loading="lazy">
+        <figcaption>Two crazy people together!</figcaption>
+      </figure>
+    </div>
+    <p class="quiet-line">Some people don't realize how much they matter because they aren't trying to be important.</p>
+    <p class="quiet-line">They just keep showing up.</p>
+    <div class="roles-list">
+      <span>Friend</span><span>Life coach</span><span>Personal trainer</span><span>Fashion consultant</span><span>Fitness police</span><span>Unsolicited advisor</span><span>Occasional menace</span>
+    </div>
+    <div class="emph-block">
+      <p>You've been a supporting character in some of my hardest chapters.</p>
+      <p>You didn't necessarily fix everything. You just kept showing up.</p>
+      <p>And sometimes, that's the thing that matters most.</p>
+      <p style="color:var(--terracotta);">So I want you to know that the favor goes both ways. If you ever need someone in your corner, I'll be there as a shoulder to lean on :)</p>
+    </div>
+    <div class="next-chapter"><button class="btn" onclick="pageTurnTo('ch8')">Next Chapter →</button></div>
+  </div>
+</section>
+
+<!-- CHAPTER 08 — EIGHT YEARS -->
+<section class="page" id="ch8">
+  <div class="page-inner chapter-reveal">
+    <div>
+      <span class="field-label">chapter 08</span>
+      <h2 style="font-size:clamp(1.5rem, 4.5vw, 2.2rem);">Eight years, mostly on the phone</h2>
+      <div class="memory-timeline">
+        <div class="mt-item">2018 — we met</div>
+        <div class="mt-item">2020 — we went in our different paths</div>
+        <div class="mt-item">Distance — Karnataka &amp; Assam</div>
+        <div class="mt-item">Weekly phone calls, somehow, anyway</div>
+        <div class="mt-item emph">20th September 2026 - We finally met after defeating the distance barrier YaaY!!! </div>
+      </div>
+      <p class="annotation" style="margin-top:clamp(8px,2vh,14px);">We didn't have hundreds of photographs together. We had conversations. Years of conversations. And somehow, those were more than enough to keep this friendship alive. But now, after all these years, we finally have some really good photographs to go along with all those memories.</p>
+    </div>
+    <div class="photo-strip" id="photo-strip"></div>
+    <div class="next-chapter"><button class="btn" onclick="pageTurnTo('ch9')">Next Chapter →</button></div>
+  </div>
+</section>
+
+<!-- CHAPTER 09 — THE LETTER -->
+<section class="page" id="ch9">
+  <div class="page-inner chapter-reveal">
+    <span class="field-label">chapter 09</span>
+    <h2 style="font-size:clamp(1.5rem, 4.5vw, 2.2rem);">One last thing</h2>
+    <div id="envelope-wrap">
+      <div id="envelope-body">
+        <div class="env-flap" id="env-flap"></div>
+      </div>
+      <div class="wax-seal" id="wax-seal" onclick="openLetter()" role="button" tabindex="0" aria-label="Break the seal and open the letter">🌻</div>
+    </div>
+    <p class="annotation">Open this when you're ready.</p>
+    <div id="letter-sheet">Dear Antariksha 🌻,
+
+Eight years is a ridiculously long time to know someone. Especially when it started with a random interaction in a random coaching class lol.
+
+Somehow, though, that one little conversation turned into weekly calls, random life updates, strict workout instructions, fashion advice, questionable food experiments, and a friendship that somehow survived everyone else disappearing.
+
+You've been one of the most consistently supportive people in my life (and I admire that alottt!!!)
+
+You've checked in when you didn't have to. You've listened when I needed someone to listen. You've pushed me when I was being a lazy idiot. And you've reminded me, more than once, that I could be growing up and doing a little better than I was.
+
+I don't think people always realize how much difference they make simply by showing up.
+
+You do (always grateful for that too!!!)
+
+And I hope you know that you've made a difference in my life too.
+
+So, on your birthday, I just wanted to give something back. Not anything particularly grand. Just a small reminder that somewhere out there is someone who listens to your stories, remembers the ridiculous little things, takes your words seriously, and genuinely wants to see you doing well.
+
+You've spent a lot of time being that person for everyone else.
+
+So if you ever need someone in your corner, I'll be there too. I might not always have the right words, the right advice, or any idea what I'm doing. 
+
+But I'll show up. That's a promise.
+
+Happy Birthday, Antariksha ❤️
+
+Keep painting.
+Keep exploring.
+Keep finding beautiful things in ordinary places.
+
+And, obviously... be forever happy :)
+
+Your supporting character in disguse
+Rahul✨❤️✨
+(aka Goru/Gadho/Idiot and other funny names that you can think about :)</div>
+    <button class="btn" id="to-final-btn" style="display:none; margin-top:18px;" onclick="pageTurnTo('final', {cinematic:true})">Make a wish!</button>
+  </div>
+</section>
+
+<!-- FINAL REVEAL — static wallpaper + photo collage -->
+<section id="final">
+  <div class="final-wallpaper" id="final-wallpaper" aria-hidden="true"></div>
+  <div class="final-vignette" aria-hidden="true"></div>
+  <div id="final-sparkles" aria-hidden="true"></div>
+  <div id="final-collage" aria-label="A collage of memories"></div>
+
+  <div id="final-copy">
+    <h1>HAPPY BIRTHDAY</h1>
+    <h2>🌻ANTARIKSHA🌻</h2>
+    <p class="meta">24 SEPTEMBER 2026</p>
+    <p class="quiet">Here's to another year of being exactly the kind of person who makes life feel a little brighter for the people around her</p>
+  </div>
+</section>
+
+<!-- PHYSICAL PAGE-TURN TRANSITION LAYER (see pageTurnTo() in script) -->
+<div id="page-turn-overlay" aria-hidden="true">
+  <div id="paper-sheet">
+    <div class="sheet-face front">
+      <span class="ptf-eyebrow" id="ptf-eyebrow">…</span>
+    </div>
+    <div class="sheet-face back">
+      <span class="ptf-eyebrow" id="ptb-num"></span>
+      <span class="ptf-title" id="ptb-title"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG — customize assets here, nowhere else needed
+   ============================================================ */
+const CONFIG = {
+  chapters: [
+    {id:'ch1', title:'The Sunflower'},
+    {id:'ch2', title:'How This Started'},
+    {id:'ch3', title:'Field Guide'},
+    {id:'ch4', title:'Things That Make Her Her'},
+    {id:'ch5', title:'ZEHER Archives'},
+    {id:'ch6', title:'Strawberry Paradox'},
+    {id:'ch7', title:'Supporting Character'},
+    {id:'ch8', title:'Eight Years'},
+    {id:'ch9', title:'One Last Thing'},
+    {id:'final', title:'The Wish'}
+  ],
+  art: {
+    chapter1: 'assets/chapter-01.jpg',
+    chapter2: 'assets/chapter-02.jpeg',
+    chapter3: 'assets/chapter-03.jpeg',
+    chapter4: 'assets/chapter-04.jpg',
+    chapter5: 'assets/chapter-05.jpg',
+    chapter6: 'assets/chapter-06.jpg',
+    chapter7a: 'assets/chapter-07-a.jpeg',
+    chapter7b: 'assets/chapter-07-b.jpeg',
+    chapter8: 'assets/chapter-08.jpg',
+    chapter9: 'assets/chapter-09.jpg',
+    final:    'assets/final-field.jpg'
+  },
+  /* Atmospheric page backgrounds — separate from the foreground art above.
+     Missing files simply fall back to the plain paper background. */
+  backgrounds: {
+    ch1: 'assets/chapter-01-bg.jpeg',
+    ch2: 'assets/chapter-02-bg.jpeg',
+    ch3: 'assets/chapter-03-bg.jpeg',
+    ch4: 'assets/chapter-04-bg.jpeg',
+    ch5: 'assets/chapter-05-bg.jpeg',
+    ch6: 'assets/chapter-06-bg.jpeg',
+    ch7: 'assets/chapter-07-bg.jpeg',
+    ch8: 'assets/chapter-08-bg.jpeg',
+    ch9: 'assets/chapter-09-bg.jpeg'
+  },
+
+  /* FINAL SCENE — change these paths when you add the ending assets. */
+  final: {
+    wallpaper: 'assets/final-wallpaper.jpeg',
+    collage: [
+      { src: 'assets/final-01.jpeg' },
+      { src: 'assets/final-02.jpeg' },
+      { src: 'assets/final-03.jpeg'},
+      { src: 'assets/final-04.jpeg'},
+      { src: 'assets/final-05.jpeg'},
+      { src: 'assets/final-06.jpeg'}
+    ]
+  },
+
+  memories: {
+    photos: [
+      { src: 'assets/antariksha-01.jpeg', caption: 'Fashion Consultant' },
+      { src: 'assets/antariksha-02.jpeg', caption: 'Full-time Bestfriend' },
+    ]
+    // photos: [ { src: 'assets/antariksha-01.jpg', caption: '2019, probably' } ]
+  },
+  music: {
+    src: '' // e.g. 'assets/ambient.mp3'
+  }
+};
+
+const indexList = document.getElementById('index-list');
+CONFIG.chapters.forEach(c=>{
+  const li = document.createElement('li');
+  const a = document.createElement('a');
+  a.href = '#' + c.id;
+  a.textContent = c.title;
+  li.appendChild(a);
+  indexList.appendChild(li);
+});
+
+document.querySelectorAll('img[data-art]').forEach(img=>{
+  const key = img.getAttribute('data-art');
+  const src = CONFIG.art[key];
+  const frame = img.closest('.art-frame');
+  if(src){
+    img.src = src;
+    img.onerror = ()=> showPending(frame, img);
+  } else {
+    showPending(frame, img);
+  }
+});
+function showPending(frame, img){
+  const div = document.createElement('div');
+  div.className = 'art-pending';
+  div.textContent = '[ illustration pending ]';
+  img.replaceWith(div);
+}
+
+const photoStrip = document.getElementById('photo-strip');
+if(CONFIG.memories.photos.length){
+  CONFIG.memories.photos.forEach(p=>{
+    const fig = document.createElement('figure');
+    fig.className = 'photo-tape';
+    fig.innerHTML = '<div class="tape-strip"></div><img src="'+p.src+'" alt="'+(p.caption||'a memory')+'" loading="lazy"><figcaption>'+(p.caption||'')+'</figcaption>';
+    photoStrip.appendChild(fig);
+  });
+} else {
+  for(let i=0;i<2;i++){
+    const fig = document.createElement('figure');
+    fig.className = 'photo-tape';
+    fig.innerHTML = '<div class="tape-strip"></div><div class="art-pending" style="min-height:170px;">photo slot —<br>future memory</div><figcaption>to be added</figcaption>';
+    photoStrip.appendChild(fig);
+  }
+}
+
+/* ---------- chapter atmospheric backgrounds (graceful fallback) ---------- */
+function loadChapterBackgrounds(){
+  Object.keys(CONFIG.backgrounds).forEach(function(chId){
+    const src = CONFIG.backgrounds[chId];
+    if(!src) return;
+    const el = document.getElementById(chId);
+    if(!el) return;
+    const probe = new Image();
+    probe.onload = function(){
+      el.style.backgroundImage = 'linear-gradient(rgba(251,243,226,.86), rgba(251,243,226,.86)), url("'+src+'")';
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+      el.classList.add('has-bg');
+    };
+    probe.onerror = function(){ /* no asset yet — plain paper stays as-is */ };
+    probe.src = src;
+  });
+}
+loadChapterBackgrounds();
+
+function showToast(msg, duration){
+  duration = duration || 3400;
+  const t = document.getElementById('toast');
+  t.innerHTML = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function(){ t.classList.remove('show'); }, duration);
+}
+
+function toggleIndex(){ document.getElementById('index-panel').classList.toggle('open'); }
+
+/* ============================================================
+   STATIC CHAPTER NAVIGATION
+   There is no page-level scrolling at all — each chapter is a
+   fixed full-viewport panel and only the "active" one is ever
+   shown. The only way to move between them is a deliberate
+   button/index click that runs pageTurnTo(), which swaps the
+   active panel while the page-turn sheet covers the viewport.
+   ============================================================ */
+let currentChapterId = CONFIG.chapters[0].id;
+let isTurning = false;
+const ptOverlay = document.getElementById('page-turn-overlay');
+const ptSheet = document.getElementById('paper-sheet');
+const ptbNum = document.getElementById('ptb-num');
+const ptbTitle = document.getElementById('ptb-title');
+const ptfEyebrow = document.getElementById('ptf-eyebrow');
+
+function reducedMotionPreferred(){
+  return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+function chapterIndexOf(id){
+  return CONFIG.chapters.findIndex(function(c){ return c.id === id; });
+}
+function updateProgress(id){
+  const idx = chapterIndexOf(id);
+  const total = CONFIG.chapters.length;
+  const pct = total > 1 ? (idx / (total - 1)) * 100 : 0;
+  document.getElementById('progress-fill').style.height = pct + '%';
+}
+
+/* Shows the destination panel and hides every other one. Also
+   (re)plays that panel's content-entrance animation and, for the
+   final scene, kicks off the flower/firefly/copy reveal — since
+   none of that can rely on scroll-triggered IntersectionObserver
+   any more. */
+function activateChapter(id){
+  CONFIG.chapters.forEach(function(c){
+    const el = document.getElementById(c.id);
+    if(el) el.classList.remove('active');
+  });
+  const destEl = document.getElementById(id);
+  if(!destEl) return;
+  destEl.classList.add('active');
+  destEl.scrollTop = 0;
+  currentChapterId = id;
+  updateProgress(id);
+
+  const reveal = destEl.querySelector('.chapter-reveal');
+  if(reveal){
+    reveal.classList.remove('visible');
+    void reveal.offsetWidth; // force reflow so the animation replays
+    requestAnimationFrame(function(){ reveal.classList.add('visible'); });
+  }
+
+  if(id === 'final'){
+    revealFinalCollage();
+    const copy = document.getElementById('final-copy');
+    copy.classList.remove('show');
+    setTimeout(function(){ copy.classList.add('show'); }, 3000);
+  }
+}
+
+function pageTurnTo(destId, opts){
+  opts = opts || {};
+  const currentId = currentChapterId;
+  if(destId === currentId){ return; }
+  const destEl = document.getElementById(destId);
+  if(!destEl) return;
+
+  if(isTurning) return;
+
+  if(reducedMotionPreferred()){
+    activateChapter(destId);
+    return;
+  }
+
+  isTurning = true;
+  const fromIdx = chapterIndexOf(currentId);
+  const toIdx = chapterIndexOf(destId);
+  const forward = toIdx > fromIdx;
+  const destMeta = CONFIG.chapters[toIdx] || {title:''};
+
+  ptbNum.textContent = toIdx >= 0 ? String(toIdx+1).padStart(2,'0') : '';
+  ptbTitle.textContent = destMeta.title || '';
+  ptfEyebrow.textContent = forward ? 'turning the page…' : 'turning back…';
+
+  const duration = opts.cinematic ? 900 : 460;
+  ptOverlay.classList.add('active');
+
+  // STEP 1 — position the sheet edge-on at the hinge, matching direction
+  ptSheet.style.transition = 'none';
+  ptSheet.style.transformOrigin = forward ? 'left center' : 'right center';
+  ptSheet.style.transform = forward ? 'rotateY(90deg)' : 'rotateY(-90deg)';
+  void ptSheet.offsetWidth; // force reflow before animating
+
+  // STEP 2 — swing the sheet across the viewport until it fully covers it
+  ptSheet.style.transition = 'transform ' + duration + 'ms cubic-bezier(.4,.08,.2,1)';
+  ptSheet.style.transform = 'rotateY(0deg)';
+
+  setTimeout(function(){
+    // STEP 3 — swap the active panel instantly while covered
+    activateChapter(destId);
+
+    // STEP 4 — continue the same rotation, uncovering the new page
+    ptSheet.style.transition = 'transform ' + duration + 'ms cubic-bezier(.4,.08,.2,1)';
+    ptSheet.style.transform = forward ? 'rotateY(-90deg)' : 'rotateY(90deg)';
+
+    setTimeout(function(){
+      ptOverlay.classList.remove('active');
+      isTurning = false;
+    }, duration + 40);
+  }, duration + 20);
+}
+
+/* journal index now performs a real page-turn rather than a plain anchor jump */
+document.querySelectorAll('#index-panel a').forEach(function(a){
+  a.addEventListener('click', function(ev){
+    ev.preventDefault();
+    const destId = a.getAttribute('href').slice(1);
+    document.getElementById('index-panel').classList.remove('open');
+    pageTurnTo(destId);
+  });
+});
+
+window.addEventListener('DOMContentLoaded', function(){
+  activateChapter('ch1');
+
+  const growSeq = ['sf-stem','sf-leaf1','sf-leaf2','sf-head'];
+  growSeq.forEach(function(id,i){ setTimeout(function(){ document.getElementById(id).classList.add('grown'); }, 300 + i*450); });
+  ['l1','l2','l3','l4','enter-btn'].forEach(function(id,i){
+    setTimeout(function(){ document.getElementById(id).classList.add('visible'); }, 1900 + i*650);
+  });
+
+  const today = new Date();
+  const bday = new Date(today.getFullYear(), 8, 24);
+  const statusEl = document.getElementById('date-status');
+  if(today < bday){ statusEl.textContent = 'the sunflower field is still growing...'; }
+  else if(today.toDateString() === bday.toDateString()){ statusEl.textContent = 'the field is in full bloom.'; }
+  else { statusEl.textContent = 'the field is still blooming.'; }
+});
+
+let sfClicks = 0;
+document.getElementById('sunflower-svg').addEventListener('click', function(){
+  sfClicks++;
+  const head = document.getElementById('sf-head');
+  head.style.transform = 'rotate(' + (sfClicks%2===0? -6:6) + 'deg)';
+  if(sfClicks === 6){ showToast('You really did just keep poking the sunflower.'); }
+});
+
+function deskNote(text){ document.getElementById('desk-note').textContent = text; }
+const haikyuuSeq = ['RECEIVE!','SET!','SPIKE!',"...okay, that's enough."];
+let haikyuuCount = 0;
+function haikyuuClick(){
+  deskNote('Because apparently volleyball anime is now a personality trait.');
+  showToast(haikyuuSeq[Math.min(haikyuuCount, haikyuuSeq.length-1)]);
+  haikyuuCount++;
+}
+let strawberryShown = false;
+function strawberryEgg(){
+  deskNote('The one fruit that has personally wronged her.');
+  if(!strawberryShown){
+    strawberryShown = true;
+    showToast('⚠ STRAWBERRY DETECTED.<br>Antariksha has been notified.<br><br>Exception protocol: Strawberry Donuts :)', 4200);
+  }
+}
+
+function analyzeDish(){
+  const notes = document.getElementById('zeher-notes');
+  const rule = document.getElementById('zeher-rule');
+  notes.innerHTML = '';
+  rule.style.display = 'none';
+  const lines = [
+    'Scanning ingredients...',
+    'Ingredient identification unsuccessful.',
+    'Cross-referencing culinary databases...',
+    'Database administrator has resigned.',
+    'Final diagnosis:',
+    'ZEHER™'
+  ];
+  let i = 0;
+  function next(){
+    if(i < lines.length){
+      const p = document.createElement('p');
+      p.className = 'zeher-line';
+      p.textContent = lines[i];
+      notes.appendChild(p);
+      requestAnimationFrame(function(){ p.classList.add('show'); });
+      i++;
+      setTimeout(next, 550);
+    } else {
+      rule.style.display = 'block';
+    }
+  }
+  next();
+}
+
+function donutClick(){ document.getElementById('donut-reveal').style.display = 'block'; }
+
+function openLetter(){
+  const seal = document.getElementById('wax-seal');
+  const flap = document.getElementById('env-flap');
+  const sheet = document.getElementById('letter-sheet');
+  if(seal.classList.contains('broken')) return;
+  seal.classList.add('broken');
+  flap.classList.add('opened');
+  setTimeout(function(){
+    sheet.classList.add('open');
+    document.getElementById('to-final-btn').style.display = 'inline-flex';
+  }, 500);
+}
+
+/* ---------- final wallpaper + random polaroid collage ---------- */
+function loadFinalWallpaper(){
+  const src = CONFIG.final && CONFIG.final.wallpaper;
+  const root = document.getElementById('final-wallpaper');
+  if(!src || !root) return;
+
+  const probe = new Image();
+  probe.onload = function(){
+    root.style.backgroundImage = 'url("'+src+'")';
+  };
+  probe.onerror = function(){
+    root.style.backgroundImage = '';
+    showToast('Add your final wallpaper at: '+src, 4200);
+  };
+  probe.src = src;
+}
+
+const finalCollage = document.getElementById('final-collage');
+let collageRun = 0;
+
+function randomBetween(min, max){
+  return min + Math.random() * (max - min);
+}
+
+function createFinalCollage(){
+  if(!finalCollage) return;
+  finalCollage.innerHTML = '';
+
+  const photos = (CONFIG.final && Array.isArray(CONFIG.final.collage))
+    ? CONFIG.final.collage.slice(0, 6)
+    : [];
+
+  if(!photos.length) return;
+
+  const box = finalCollage.getBoundingClientRect();
+  const collageWidth = Math.max(box.width, 280);
+  const collageHeight = Math.max(box.height, 220);
+  const wide = collageWidth / Math.max(collageHeight, 1) > 1.45;
+  const mobile = window.innerWidth <= 700 || collageWidth < 560;
+
+  // Slightly enlarge the collage cards without letting them consume the whole
+  // viewport or spill into the lower message band. Use a smaller responsive gap
+  // to preserve the airy composition while still allowing a 10–20% size bump.
+  const cols = wide ? 3 : 2;
+  const rows = Math.ceil(photos.length / cols);
+  const gap = mobile ? 8 : 12;
+  const sizeBoost = mobile ? 1.02 : 1.08;
+
+  const widthBudget = collageWidth - (cols + 1) * gap;
+  const heightBudget = collageHeight - (rows + 1) * gap;
+  const baseCardWidth = Math.min(widthBudget / cols, heightBudget / rows / 1.25);
+  const cardWidth = Math.min(baseCardWidth * sizeBoost, (collageWidth / cols) * 0.92);
+  const cardHeight = cardWidth * 1.25;
+
+  const gridWidth = cols * cardWidth + (cols - 1) * gap;
+  const gridHeight = rows * cardHeight + (rows - 1) * gap;
+  const startX = Math.max(gap, (collageWidth - gridWidth) / 2);
+  const startY = Math.max(gap, (collageHeight - gridHeight) / 2) - 6;
+
+  photos.forEach(function(p, i){
+    const fig = document.createElement('figure');
+    fig.className = 'final-polaroid';
+    fig.style.width = Math.round(cardWidth) + 'px';
+    fig.style.height = Math.round(cardHeight) + 'px';
+    fig.style.zIndex = String(10 + i);
+    fig.dataset.rotation = randomBetween(-7, 7).toFixed(1);
+
+    const imgSrc = p && p.src ? p.src : '';
+    const caption = p && p.caption ? p.caption : '';
+
+    if(imgSrc){
+      const img = document.createElement('img');
+      img.src = imgSrc;
+      img.alt = caption || 'A memory';
+      img.loading = 'eager';
+      img.onerror = function(){
+        img.replaceWith(makePhotoSlot());
+      };
+      fig.appendChild(img);
+    } else {
+      fig.appendChild(makePhotoSlot());
+    }
+
+    const cap = document.createElement('figcaption');
+    cap.textContent = caption;
+    fig.appendChild(cap);
+
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    fig.style.left = Math.round(startX + col * (cardWidth + gap)) + 'px';
+    fig.style.top = Math.round(startY + row * (cardHeight + gap)) + 'px';
+
+    finalCollage.appendChild(fig);
+  });
+}
+
+function makePhotoSlot(){
+  const slot = document.createElement('div');
+  slot.className = 'photo-slot';
+  slot.innerHTML = 'photo slot<br><span style="font-family:Space Mono,monospace;font-size:.58rem;">add image in CONFIG.final.collage</span>';
+  return slot;
+}
+
+function revealFinalCollage(){
+  collageRun++;
+  createFinalCollage();
+
+  const run = collageRun;
+  document.querySelectorAll('.final-polaroid').forEach(function(card, i){
+    setTimeout(function(){
+      if(run !== collageRun) return;
+      card.classList.add('show');
+      const rotation = Number(card.dataset.rotation || 0);
+      card.style.transform = 'translateY(0) scale(1) rotate('+rotation+'deg)';
+    }, 220 + i * 420);
+  });
+}
+
+function createFinalSparkles(){
+  const sparkleRoot = document.getElementById('final-sparkles');
+  if(!sparkleRoot) return;
+  sparkleRoot.innerHTML = '';
+
+  // Keep the animated particles in the outer rails, away from the collage and message.
+  for(let i=0;i<28;i++){
+    const sparkle = document.createElement('span');
+    sparkle.className = 'final-sparkle';
+    sparkle.style.left = (i % 2 === 0 ? randomBetween(2, 8) : randomBetween(92, 98)) + '%';
+    sparkle.style.top = randomBetween(8, 92) + '%';
+    sparkle.style.animationDelay = randomBetween(-3.8, 0) + 's';
+    sparkle.style.animationDuration = randomBetween(3.2, 5.2) + 's';
+    sparkleRoot.appendChild(sparkle);
+  }
+}
+
+loadFinalWallpaper();
+createFinalSparkles();
+
+
+let audioEl = null, musicOn = false;
+function toggleMusic(){
+  if(!CONFIG.music.src){
+    showToast('Add a track path in CONFIG.music.src to enable ambient sound.');
+    return;
+  }
+  if(!audioEl){
+    audioEl = new Audio(CONFIG.music.src);
+    audioEl.loop = true;
+    audioEl.volume = 0;
+  }
+  musicOn = !musicOn;
+  document.getElementById('music-toggle').textContent = musicOn ? '🔊' : '🔇';
+  if(musicOn){
+    audioEl.play().catch(function(){ showToast('Playback needs a click first — try again.'); });
+    let v = 0;
+    const fade = setInterval(function(){ v += 0.05; audioEl.volume = Math.min(v,0.4); if(v>=0.4) clearInterval(fade); }, 120);
+  } else {
+    let v = audioEl.volume;
+    const fade = setInterval(function(){ v -= 0.05; audioEl.volume = Math.max(v,0); if(v<=0){ clearInterval(fade); audioEl.pause(); } }, 120);
+  }
+}
+</script>
+</body>
+</html>
