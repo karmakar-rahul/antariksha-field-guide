@@ -721,17 +721,17 @@ a{ color:inherit; }
 
 .music-toggle{
   position:fixed;
-  bottom:22px;
-  right:22px;
+  bottom:20px;
+  right:20px;
   z-index:999;
 
-  width:48px;
-  height:48px;
+  width:40px;
+  height:40px;
 
   border-radius:50%;
 
-  background:var(--paper);
-  border:1.5px solid var(--ink);
+  background:rgba(255,255,255,0.28);
+  border:1px solid rgba(20,18,15,0.35);
 
   display:flex;
   align-items:center;
@@ -739,9 +739,23 @@ a{ color:inherit; }
 
   cursor:pointer;
 
-  box-shadow:2px 3px 0 var(--shadow);
+  box-shadow:none;
 
-  font-size:1.15rem;
+  font-size:0.95rem;
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+}
+
+@media (max-width:700px){
+  .music-toggle{
+    width:34px;
+    height:34px;
+    bottom:14px;
+    right:14px;
+    font-size:0.8rem;
+    background:rgba(255,255,255,0.18);
+    border-color:rgba(20,18,15,0.25);
+  }
 }
 
 /* ============================================================
