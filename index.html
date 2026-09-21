@@ -716,49 +716,6 @@ a{ color:inherit; }
 }
 
 /* ============================================================
-   MUSIC BUTTON
-   ============================================================ */
-
-.music-toggle{
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  z-index:999;
-
-  width:40px;
-  height:40px;
-
-  border-radius:50%;
-
-  background:rgba(255,255,255,0.28);
-  border:1px solid rgba(20,18,15,0.35);
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  cursor:pointer;
-
-  box-shadow:none;
-
-  font-size:0.95rem;
-  backdrop-filter:blur(2px);
-  -webkit-backdrop-filter:blur(2px);
-}
-
-@media (max-width:700px){
-  .music-toggle{
-    width:34px;
-    height:34px;
-    bottom:14px;
-    right:14px;
-    font-size:0.8rem;
-    background:rgba(255,255,255,0.18);
-    border-color:rgba(20,18,15,0.25);
-  }
-}
-
-/* ============================================================
    CHAPTER ATMOSPHERIC BACKGROUNDS
    Backgrounds are applied by JS (CONFIG.backgrounds) directly onto
    the .page element as a soft, paper-tinted overlay image. Missing
@@ -855,7 +812,6 @@ html, body{ height:100%; overflow:hidden; scroll-behavior:auto; }
 </nav>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<div class="music-toggle" id="music-toggle" onclick="toggleMusic()" title="Toggle ambient music" aria-label="Toggle music">🔇</div>
 
 <!-- CHAPTER 01 — THE SUNFLOWER (cover / first page) -->
 <section class="page" id="ch1">
@@ -948,7 +904,7 @@ html, body{ height:100%; overflow:hidden; scroll-behavior:auto; }
       </button>
       <button class="fg-mark" onclick="this.classList.toggle('open')">
         <h3>Habitat</h3>
-        <div class="fg-body">Cafés, Art stores, Beaches, Mountains, Stationery shops, and anywhere interesting food can be found.</div>
+        <div class="fg-body">Cafés, Art stores, Stationery shops, Beaches, Mountains, and anywhere interesting food can be found.</div>
         <div class="fg-extra">Migratory pattern: unpredictable, reliably delightful.</div>
       </button>
       <button class="fg-mark" onclick="this.classList.toggle('open')">
@@ -973,7 +929,7 @@ html, body{ height:100%; overflow:hidden; scroll-behavior:auto; }
       </button>
       <button class="fg-mark" onclick="this.classList.toggle('open')">
         <h3>Commonly Found With</h3>
-        <div class="fg-body">Coffee, tea, Stationery, Travel plans and approximately 47 ideas at once.</div>
+        <div class="fg-body">Coffee, Tea, Stationery, Travel plans and approximately 47 ideas at once.</div>
         <div class="fg-extra">Do not attempt to keep up. It is not possible.</div>
       </button>
       <div class="next-chapter"><button class="btn" onclick="pageTurnTo('ch4')">Next Chapter →</button></div>
@@ -1102,9 +1058,9 @@ html, body{ height:100%; overflow:hidden; scroll-behavior:auto; }
       <span class="field-label">chapter 08</span>
       <h2 style="font-size:clamp(1.5rem, 4.5vw, 2.2rem);">Eight years, mostly on the phone</h2>
       <div class="memory-timeline">
-        <div class="mt-item">2018 — we met</div>
-        <div class="mt-item">2020 — we went in our different paths</div>
-        <div class="mt-item">Distance — Karnataka &amp; Assam</div>
+        <div class="mt-item">2018 — We met</div>
+        <div class="mt-item">2020 — We went in our different paths</div>
+        <div class="mt-item">Distance — Hassan, Karnataka &amp; Guwahati,Assam</div>
         <div class="mt-item">Weekly phone calls, somehow, anyway</div>
         <div class="mt-item emph">20th September 2026 - We finally met after defeating the distance barrier YaaY!!! </div>
       </div>
@@ -1129,7 +1085,7 @@ html, body{ height:100%; overflow:hidden; scroll-behavior:auto; }
     <p class="annotation">Open this when you're ready.</p>
     <div id="letter-sheet">Dear Antariksha 🌻,
 
-Eight years is a ridiculously long time to know someone. Especially when it started with a random interaction in a random coaching class lol.
+Eight years is a ridiculously long time to know someone. Especially when it started with a random interaction in a random class lol.
 
 Somehow, though, that one little conversation turned into weekly calls, random life updates, strict workout instructions, fashion advice, questionable food experiments, and a friendship that somehow survived everyone else disappearing.
 
@@ -1549,7 +1505,7 @@ function openLetter(){
   }, 500);
 }
 
-/* ---------- final wallpaper + random polaroid collage ---------- */
+/*final wallpaper + random polaroid collage*/
 function loadFinalWallpaper(){
   const src = CONFIG.final && CONFIG.final.wallpaper;
   const root = document.getElementById('final-wallpaper');
@@ -1674,28 +1630,6 @@ loadFinalWallpaper();
 createFinalSparkles();
 
 
-let audioEl = null, musicOn = false;
-function toggleMusic(){
-  if(!CONFIG.music.src){
-    showToast('Add a track path in CONFIG.music.src to enable ambient sound.');
-    return;
-  }
-  if(!audioEl){
-    audioEl = new Audio(CONFIG.music.src);
-    audioEl.loop = true;
-    audioEl.volume = 0;
-  }
-  musicOn = !musicOn;
-  document.getElementById('music-toggle').textContent = musicOn ? '🔊' : '🔇';
-  if(musicOn){
-    audioEl.play().catch(function(){ showToast('Playback needs a click first — try again.'); });
-    let v = 0;
-    const fade = setInterval(function(){ v += 0.05; audioEl.volume = Math.min(v,0.4); if(v>=0.4) clearInterval(fade); }, 120);
-  } else {
-    let v = audioEl.volume;
-    const fade = setInterval(function(){ v -= 0.05; audioEl.volume = Math.max(v,0); if(v<=0){ clearInterval(fade); audioEl.pause(); } }, 120);
-  }
-}
 </script>
 </body>
 </html>
