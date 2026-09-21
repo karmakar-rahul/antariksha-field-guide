@@ -561,95 +561,89 @@ a{ color:inherit; }
 @media (max-width:700px){
 
   /*
-     IMPORTANT:
-     The collage gets roughly 70% of the viewport.
+     MOBILE FINAL LAYOUT
 
-     This gives the JavaScript enough vertical budget to make
-     the 3 rows of polaroids larger without clipping them.
+     The photo grid gets the upper ~62% of the viewport.
+     The birthday message occupies the lower section.
   */
+
   #final-collage{
-    height:70vh;
+    top:0;
+    height:63vh;
+    width:100%;
+    overflow:hidden;
   }
 
 
   /*
-     Let each polaroid use substantially more horizontal space.
-     The JavaScript will still shrink them if necessary to keep
-     the complete 2x3 grid inside the collage.
+     The JS sets the actual width.
+
+     This provides a larger starting point and makes the
+     polaroids visually dominant on phones.
   */
   .final-polaroid{
-    width:clamp(130px,42vw,190px);
-
-    padding:
-      7px
-      7px
-      22px;
+    width:clamp(145px,47vw,185px);
+    padding:7px 7px 21px;
   }
 
 
   .final-polaroid figcaption{
-    font-size:.68rem;
-    margin-top:4px;
+    font-size:.65rem;
+    margin-top:3px;
   }
 
 
-  /*
-     Slightly smaller tape so it doesn't visually crowd
-     the enlarged photographs.
-  */
   .final-polaroid::after{
-    width:42px;
-    height:15px;
-    top:-8px;
+    width:40px;
+    height:14px;
+    top:-7px;
   }
 
 
   /*
-     The message gets the remaining lower section.
-     Keeping this around 25% prevents it from fighting
-     with the bottom row of photographs.
+     Compact lower message area.
   */
   #final-copy{
     width:94vw;
 
-    min-height:25%;
+    min-height:27%;
 
     bottom:1%;
 
     padding:
+      6px
       8px
-      10px
-      5px;
+      4px;
   }
 
 
   #final-copy h1{
-    font-size:clamp(1.9rem,8vw,2.7rem);
-    line-height:1.0;
+    font-size:clamp(1.85rem,8vw,2.6rem);
+    line-height:1;
+    margin-bottom:2px;
   }
 
 
   #final-copy h2{
-    font-size:clamp(1.7rem,7vw,2.35rem);
-    line-height:1.05;
-    margin-bottom:6px;
+    font-size:clamp(1.65rem,7vw,2.3rem);
+    line-height:1.02;
+    margin-bottom:5px;
   }
 
 
   #final-copy .meta{
-    font-size:.72rem;
-    margin-bottom:4px;
+    font-size:.70rem;
+    margin-bottom:3px;
   }
 
 
   #final-copy .quiet{
-    font-size:.95rem;
-    line-height:1.3;
-    max-width:390px;
-    margin-top:6px;
+    font-size:.92rem;
+    line-height:1.25;
+    max-width:380px;
+    margin-top:5px;
   }
 }
-
 
 /* ============================================================
    MUSIC BUTTON
@@ -1515,22 +1509,103 @@ function createFinalCollage(){
   // viewport or spill into the lower message band. Use a smaller responsive gap
   // to preserve the airy composition while still allowing a 10–20% size bump.
   const cols = wide ? 3 : 2;
-  const rows = Math.ceil(photos.length / cols);
-  const gap = mobile ? 7 : 12;
-  const sizeBoost = mobile ? 1.06 : 1.08;
+const rows = Math.ceil(photos.length / cols);
 
-  const widthBudget = collageWidth - (cols + 1) * gap;
-  const heightBudget = collageHeight - (rows + 1) * gap;
-  const baseCardWidth = Math.min(widthBudget / cols, heightBudget / rows / (mobile ? 1.18 : 1.25));
-  const cardWidth = Math.min(baseCardWidth * sizeBoost,mobile
-    ? ((collageWidth - gap) / 2) * 0.94
-    : (collageWidth / cols) * 0.92);
-  const cardHeight = cardWidth * 1.25;
 
-  const gridWidth = cols * cardWidth + (cols - 1) * gap;
-  const gridHeight = rows * cardHeight + (rows - 1) * gap;
-  const startX = Math.max(gap, (collageWidth - gridWidth) / 2);
-  const startY = Math.max(gap, (collageHeight - gridHeight) / 2) - 6;
+/*
+   MOBILE:
+   Use almost the entire width of the phone for the
+   two-column photo grid.
+
+   DESKTOP:
+   Keep the original airy spacing.
+*/
+const gap = mobile ? 5 : 12;
+
+
+/*
+   Mobile cards get a controlled size boost.
+*/
+const sizeBoost = mobile ? 1.04 : 1.08;
+
+const widthBudget = collageWidth - (cols + 1) * gap;
+const heightBudget = collageHeight - (rows + 1) * gap;
+
+
+/*
+   On mobile, width should be the primary constraint.
+
+   This is important because the phone is narrow:
+   we want each photo to use as much of each column
+   as possible rather than shrinking them unnecessarily.
+*/
+const baseCardWidth = mobile
+  ? widthBudget / cols
+  : Math.min(
+      widthBudget / cols,
+      heightBudget / rows / 1.25
+    );
+
+
+/*
+   Final card width.
+
+   Mobile:
+   nearly the entire two-column width.
+
+   Desktop:
+   retain the original behavior.
+*/
+const cardWidth = mobile
+  ? Math.min(
+      baseCardWidth * sizeBoost,
+      (collageWidth - 3 * gap) / 2
+    )
+  : Math.min(
+      baseCardWidth * sizeBoost,
+      (collageWidth / cols) * 0.92
+    );
+
+
+const cardHeight = cardWidth * 1.25;
+
+
+const gridWidth =
+  cols * cardWidth +
+  (cols - 1) * gap;
+
+
+const gridHeight =
+  rows * cardHeight +
+  (rows - 1) * gap;
+
+
+/*
+   Center horizontally.
+*/
+const startX =
+  Math.max(
+    gap,
+    (collageWidth - gridWidth) / 2
+  );
+
+
+/*
+   IMPORTANT DIFFERENCE:
+
+   Desktop:
+   vertically center the grid.
+
+   Mobile:
+   start the grid near the top so we don't waste
+   the large empty area underneath the third row.
+*/
+const startY = mobile
+  ? 8
+  : Math.max(
+      gap,
+      (collageHeight - gridHeight) / 2
+    ) - 6;
 
   photos.forEach(function(p, i){
     const fig = document.createElement('figure');
