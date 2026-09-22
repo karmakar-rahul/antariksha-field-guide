@@ -79,8 +79,11 @@ a{ color:inherit; }
   text-decoration:none; font-family:'Patrick Hand',cursive; font-size:1.05rem;
   display:flex; gap:8px; padding:6px 8px; border-radius:3px; color:var(--ink-soft);
 }
-#index-panel a::before{ content: counter(idx, decimal-leading-zero) " —"; color:var(--terracotta); font-family:'Space Mono',monospace; font-size:.78rem; }
+#index-panel a::before{ content:attr(data-number) " —"; color:var(--terracotta); font-family:'Space Mono',monospace; font-size:.78rem; }
+#index-panel li.no-number a::before{ content:''; }
 #index-panel a:hover{ background:var(--paper-dark); color:var(--ink); }
+#index-panel li.special-index a{ color:var(--terracotta); font-family:'Caveat',cursive; font-size:1.15rem; }
+#index-panel li.special-index a::before{ content:'✦'; color:var(--sunflower-2); font-family:'Caveat',cursive; font-size:1rem; }
 
 /* ============================================================
    PAGE / CHAPTER SHELL — editorial, asymmetric composition
@@ -253,6 +256,40 @@ a{ color:inherit; }
 .photo-tape .tape-strip{ position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(-2deg); width:54px; height:18px; background:rgba(240,178,46,.4); border:1px solid rgba(59,40,25,.15); }
 .photo-tape figcaption{ font-family:'Patrick Hand',cursive; font-size:.8rem; text-align:center; margin-top:6px; color:var(--ink-soft); }
 @media (max-width:820px){ #ch8 .page-inner{ grid-template-columns:1fr; } }
+
+/* SPECIAL FIELD NOTE — 20 SEPTEMBER 2026 */
+#special20{align-items:flex-start;justify-content:center;padding-top:clamp(70px,10vh,96px);padding-bottom:clamp(50px,8vh,80px)}
+#special20 .page-inner{max-width:1040px;text-align:left}
+#special20 .special20-header{max-width:760px;margin:0 auto clamp(22px,4vh,40px);text-align:center}
+#special20 .special20-kicker{display:inline-block;font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.16em;color:var(--terracotta);border:1px solid var(--terracotta);padding:4px 9px;transform:rotate(-1.5deg);margin-bottom:8px}
+#special20 .special20-header h2{font-size:clamp(2rem,5vw,3rem);color:var(--ink);line-height:1}
+#special20 .special20-date{font-family:'Space Mono',monospace;font-size:clamp(.72rem,1.4vw,.9rem);color:var(--clay);letter-spacing:.08em;margin-top:8px}
+#special20 .special20-subtitle{font-family:'Patrick Hand',cursive;font-size:clamp(1.15rem,2vw,1.45rem);color:var(--ink-soft);margin:8px auto 0}
+#special20 .special20-note{background:rgba(251,243,226,.78);border-left:3px solid var(--terracotta);padding:clamp(14px,2.5vh,24px) clamp(16px,3vw,28px);margin:0 auto clamp(24px,4vh,42px);max-width:900px;box-shadow:0 5px 18px rgba(59,40,25,.08)}
+#special20 .special20-note p{font-family:'Patrick Hand',cursive;font-size:clamp(1.05rem,1.8vw,1.25rem);line-height:1.5;margin:0 0 9px}
+#special20 .special20-note p:last-child{margin-bottom:0}
+#special20 .special20-section-title{font-family:'Caveat',cursive;font-size:clamp(1.65rem,3.5vw,2.25rem);color:var(--terracotta);margin:clamp(20px,4vh,36px) 0 10px}
+#special20 .special20-polaroids{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,2.5vw,28px);align-items:start;margin:clamp(12px,2vh,20px) 0 clamp(26px,4vh,42px)}
+#special20 .special20-polaroid{position:relative;margin:0;background:#fffdf7;border:1px solid rgba(59,40,25,.18);padding:8px 8px 28px;box-shadow:0 10px 22px rgba(35,24,17,.24),0 2px 4px rgba(35,24,17,.14);min-width:0}
+#special20 .special20-polaroid:nth-child(odd){transform:rotate(-2deg)}
+#special20 .special20-polaroid:nth-child(even){transform:rotate(1.7deg)}
+#special20 .special20-polaroid:nth-child(3){transform:rotate(-.8deg)}
+#special20 .special20-polaroid:nth-child(4){transform:rotate(2.2deg)}
+#special20 .special20-polaroid::after{content:'';position:absolute;top:-10px;left:50%;width:54px;height:18px;transform:translateX(-50%) rotate(-2deg);background:rgba(240,178,46,.34);border:1px solid rgba(59,40,25,.10);box-shadow:0 2px 4px rgba(0,0,0,.08)}
+#special20 .special20-polaroid img,#special20 .special20-slot{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
+#special20 .special20-slot{display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;color:var(--clay);font-family:'Patrick Hand',cursive;font-size:1rem;background:repeating-linear-gradient(135deg,var(--paper) 0 12px,var(--paper-dark) 12px 24px);border:1px dashed var(--clay)}
+#special20 .special20-caption{min-height:14px;margin-top:7px;text-align:center;color:var(--ink-soft);font-family:'Patrick Hand',cursive;font-size:.82rem}
+#special20 .special20-route{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 14px;margin:10px 0 22px;font-family:'Space Mono',monospace;font-size:.72rem;color:var(--clay);text-transform:uppercase;letter-spacing:.04em}
+#special20 .special20-route span:not(:last-child)::after{content:'→';margin-left:14px;color:var(--sunflower-2)}
+#special20 .special20-spaghetti{background:rgba(240,178,46,.13);border:1px dashed var(--sunflower-2);padding:clamp(16px,2.5vh,24px) clamp(16px,3vw,28px);margin:clamp(16px,3vh,28px) 0;transform:rotate(-.4deg)}
+#special20 .special20-spaghetti h3{font-size:clamp(1.5rem,3vw,2rem);color:var(--terracotta);margin-bottom:6px}
+#special20 .special20-spaghetti p{font-family:'Patrick Hand',cursive;font-size:clamp(1.05rem,1.8vw,1.25rem);line-height:1.5;margin:7px 0}
+#special20 .special20-verdict{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--terracotta);margin-top:12px;letter-spacing:.04em}
+#special20 .special20-ending{max-width:780px;margin:clamp(20px,4vh,38px) auto 0;text-align:center}
+#special20 .special20-ending p{font-family:'Patrick Hand',cursive;font-size:clamp(1.1rem,2vw,1.3rem);line-height:1.55;margin:6px 0}
+#special20 .special20-next{justify-content:center;margin-top:clamp(24px,4vh,40px)}
+@media (max-width:820px){#special20 .special20-polaroids{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}
+@media (max-width:520px){#special20{padding-top:68px}#special20 .page-inner{width:100%}#special20 .special20-header{margin-bottom:24px}#special20 .special20-polaroids{gap:10px}#special20 .special20-polaroid{padding:5px 5px 21px}#special20 .special20-polaroid:nth-child(odd){transform:rotate(-1.4deg)}#special20 .special20-polaroid:nth-child(even){transform:rotate(1.2deg)}#special20 .special20-polaroid:nth-child(3),#special20 .special20-polaroid:nth-child(4){transform:rotate(-.7deg)}#special20 .special20-polaroid::after{width:42px;height:14px;top:-7px}#special20 .special20-caption{font-size:.7rem}#special20 .special20-route{font-size:.62rem;gap:6px 10px}#special20 .special20-route span:not(:last-child)::after{margin-left:10px}}
 
 /* CHAPTER 09 */
 #ch9 .page-inner{ max-width:640px; text-align:center; }
@@ -942,11 +979,11 @@ html, body{ height:100%; overflow:hidden; scroll-behavior:auto; }
   <div class="page-inner chapter-reveal">
     <span class="field-label">chapter 04</span>
     <h2 style="font-size:clamp(1.5rem, 4.5vw, 2.2rem);">The things that make her "her"</h2>
-    <p class="annotation" style="margin-bottom:18px;">Everything on this desk has a reason for being here.</p>
+    <p class="annotation" style="margin-bottom:18px;">Everything on this desk has a reason for being here. Tap on it to know why :)</p>
     <div class="desk-surface">
       <div class="desk-obj" tabindex="0" onclick="deskNote('Fuel for adventures, questionable decisions and conversations that somehow last forever.')">☕<span class="obj-label">Coffee</span></div>
       <div class="desk-obj" tabindex="0" onclick="deskNote('Aadraak wali chai, very comforting')">🍵<span class="obj-label">Chaii</span></div>
-      <div class="desk-obj" tabindex="0" onclick="deskNote('For someone who somehow finds interesting art styles everywhere.')">🖌️<span class="obj-label">Paint brush</span></div>
+      <div class="desk-obj" tabindex="0" onclick="deskNote('For someone who somehow finds interesting art styles everywhere and absolutely loves to draw wonders!')">🖌️<span class="obj-label">Paint brush</span></div>
       <div class="desk-obj" tabindex="0" onclick="deskNote('Premium stationery detected. Financial responsibility has left the building.')">🖊️<span class="obj-label">Pen</span></div>
       <div class="desk-obj" tabindex="0" onclick="deskNote('A world of infinite creativity and beautiful memories')">📓<span class="obj-label">Journal</span></div>
       <div class="desk-obj" tabindex="0" onclick="haikyuuClick()">🏐<span class="obj-label">Haikyuu!!</span></div>
@@ -1007,6 +1044,7 @@ html, body{ height:100%; overflow:hidden; scroll-behavior:auto; }
       <div id="donut-reveal">
         Scientists remain unable to explain this contradiction.<br><br>
         Current hypothesis: Strawberry Donuts operate under different laws of physics.
+        Conclusion: Sometimes, the things we don't expect to like end up giving us our favourite surprises.
         <div class="case-status">
           <span>STATUS: UNRESOLVED</span>
           <span>CONFIDENCE: 100%</span>
@@ -1067,7 +1105,48 @@ html, body{ height:100%; overflow:hidden; scroll-behavior:auto; }
       <p class="annotation" style="margin-top:clamp(8px,2vh,14px);">We didn't have hundreds of photographs together. We had conversations. Years of conversations. And somehow, those were more than enough to keep this friendship alive. But now, after all these years, we finally have some really good photographs to go along with all those memories.</p>
     </div>
     <div class="photo-strip" id="photo-strip"></div>
-    <div class="next-chapter"><button class="btn" onclick="pageTurnTo('ch9')">Next Chapter →</button></div>
+    <div class="next-chapter"><button class="btn" onclick="pageTurnTo('special20')">Next Chapter →</button></div>
+  </div>
+</section>
+
+<!-- SPECIAL FIELD NOTE — 20 SEPTEMBER 2026 -->
+<section class="page" id="special20">
+  <div class="page-inner chapter-reveal">
+    <div class="special20-header">
+      <span class="special20-kicker">HONOURABLE MENTION · FIELD NOTE</span>
+      <h2>20 September 2026</h2>
+      <div class="special20-date">THE DAY WE FINALLY MET AGAIN</div>
+      <p class="special20-subtitle">Eight years of waiting. One very good Sunday. And a completely inaccurate estimate of how much food two people can eat.</p>
+    </div>
+    <div class="special20-note">
+      <p>After years of phone calls, messages, different cities and repeatedly saying that we should someday go cafe-hopping, we finally got a day where the plan actually happened.</p>
+      <p>20 September 2026 was that day. We went out, wandered around, talked about approximately everything, took enough photographs, and finally got to do the very ordinary thing that had somehow become a very long-awaited thing: just spend a whole day together.</p>
+    </div>
+    <div class="special20-route" aria-label="Our cafe hopping route">
+      <span>The Chill Cat IceCream</span><span>Daily Doze Bake House</span><span>Cafe Periwinkle</span>
+    </div>
+    <h3 class="special20-section-title">A small photographic record of the day</h3>
+    <div class="special20-polaroids" id="special20-polaroids" aria-label="Six memories from 20 September 2026"></div>
+    <div class="special20-note">
+      <p>There was, of course, the food. And because neither of us apparently possesses the ability to estimate our own appetite with any accuracy, we did what any sensible pair of cafe-hoppers would do.</p>
+      <p><strong>We over-ordered!</strong></p>
+      <p>At Daily Doze, the confidence was high. The menu looked manageable. Our stomachs, however, had other plans.</p>
+    </div>
+    <div class="special20-spaghetti">
+      <h3>The Spaghetti Aglio Olio Incident</h3>
+      <p>Somewhere along the way, funny how you decided that I apparently have a very small appetite when compared to you and your roommates (very funny). A statement that aged rather badly.</p>
+      <p>Because then came the plate of Spaghetti.</p>
+      <p>We tried. We genuinely tried till 1:30pm. We pushed the same plate to each other (eat your veggies!!!). And despite all our confidence, all our previous food-related optimism, and all the mocking directed at my tiny appetite...</p>
+      <p><strong>we could not finish the spaghetti :(</strong></p>
+      <p>There is, fortunately, photographic evidence of the unfinished dish having exactly 1234 spaghetti strings (which you definitely agree lol). And also the ice tea never came to our table (thank god ~_~). History will remember this moment accurately.</p>
+      <div class="special20-verdict">FIELD REPORT: OUR EATING CAPACITY WAS SIGNIFICANTLY OVERSTATED.</div>
+    </div>
+    <div class="special20-ending">
+      <p>But honestly, that was the best part.</p>
+      <p>Nothing about the day needed to be extraordinary. We just needed a Sunday, a few cafes, too much food, enough time to talk, and the chance to finally be in the same place after all those years.</p>
+      <p style="color:var(--terracotta);">20 September 2026 — definitely worth the wait.</p>
+    </div>
+    <div class="next-chapter special20-next"><button class="btn" onclick="pageTurnTo('ch9')">Continue to Chapter 09 →</button></div>
   </div>
 </section>
 
@@ -1156,16 +1235,17 @@ Rahul✨❤️✨
    ============================================================ */
 const CONFIG = {
   chapters: [
-    {id:'ch1', title:'The Sunflower'},
-    {id:'ch2', title:'How This Started'},
-    {id:'ch3', title:'Field Guide'},
-    {id:'ch4', title:'Things That Make Her Her'},
-    {id:'ch5', title:'ZEHER Archives'},
-    {id:'ch6', title:'Strawberry Paradox'},
-    {id:'ch7', title:'Supporting Character'},
-    {id:'ch8', title:'Eight Years'},
-    {id:'ch9', title:'One Last Thing'},
-    {id:'final', title:'The Wish'}
+    {id:'ch1', title:'The Sunflower', number:'01'},
+    {id:'ch2', title:'How This Started', number:'02'},
+    {id:'ch3', title:'Field Guide', number:'03'},
+    {id:'ch4', title:'Things That Make Her Her', number:'04'},
+    {id:'ch5', title:'ZEHER Archives', number:'05'},
+    {id:'ch6', title:'Strawberry Paradox', number:'06'},
+    {id:'ch7', title:'Supporting Character', number:'07'},
+    {id:'ch8', title:'Eight Years', number:'08'},
+    {id:'special20', title:'20 September 2026 — A Day Worth Remembering', special:true},
+    {id:'ch9', title:'One Last Thing', number:'09'},
+    {id:'final', title:'The Wish', number:''}
   ],
   art: {
     chapter1: 'assets/chapter-01.jpg',
@@ -1191,6 +1271,7 @@ const CONFIG = {
     ch6: 'assets/chapter-06-bg.jpeg',
     ch7: 'assets/chapter-07-bg.jpeg',
     ch8: 'assets/chapter-08-bg.jpeg',
+    special20: 'assets/september-20-bg.jpeg',
     ch9: 'assets/chapter-09-bg.jpeg'
   },
 
@@ -1207,10 +1288,22 @@ const CONFIG = {
     ]
   },
 
+  special20: {
+    wallpaper: 'assets/september-20-bg.jpeg',
+    photos: [
+      { src: 'assets/september-01.jpeg', caption: 'Chill Cat IceCream' },
+      { src: 'assets/september-02.jpeg', caption: 'Daily Doze Bake House' },
+      { src: 'assets/september-03.jpeg', caption: 'Cafe Periwinkle' },
+      { src: 'assets/september-04.jpeg', caption: 'Window Shopping at Sapna Book House' },
+      { src: 'assets/september-05.jpeg', caption: 'That Unfinished Spaghetti' },
+      { src: 'assets/september-06.jpeg', caption: 'A day worth remembering' }
+    ]
+  },
+
   memories: {
     photos: [
       { src: 'assets/antariksha-01.jpeg', caption: 'Fashion Consultant' },
-      { src: 'assets/antariksha-02.jpeg', caption: 'Full-time Bestfriend' },
+      { src: 'assets/antariksha-02.jpeg', caption: 'Full-time cafe-hopping partner' },
     ]
     // photos: [ { src: 'assets/antariksha-01.jpg', caption: '2019, probably' } ]
   },
@@ -1222,8 +1315,11 @@ const CONFIG = {
 const indexList = document.getElementById('index-list');
 CONFIG.chapters.forEach(c=>{
   const li = document.createElement('li');
+  if(c.special) li.classList.add('special-index');
+  if(!c.number && !c.special) li.classList.add('no-number');
   const a = document.createElement('a');
   a.href = '#' + c.id;
+  a.dataset.number = c.number || '';
   a.textContent = c.title;
   li.appendChild(a);
   indexList.appendChild(li);
@@ -1263,6 +1359,60 @@ if(CONFIG.memories.photos.length){
     photoStrip.appendChild(fig);
   }
 }
+
+/* ---------- special field note: 20 September 2026 ---------- */
+function loadSpecial20Wallpaper(){
+  const cfg = CONFIG.special20 || {};
+  const el = document.getElementById('special20');
+  const src = cfg.wallpaper;
+  if(!el || !src) return;
+  const probe = new Image();
+  probe.onload = function(){
+    el.style.backgroundImage = 'linear-gradient(rgba(251,243,226,.84), rgba(251,243,226,.84)), url("'+src+'")';
+    el.style.backgroundSize = 'cover';
+    el.style.backgroundPosition = 'center';
+    el.classList.add('has-bg');
+  };
+  probe.onerror = function(){};
+  probe.src = src;
+}
+function createSpecial20Polaroids(){
+  const root = document.getElementById('special20-polaroids');
+  const photos = CONFIG.special20 && Array.isArray(CONFIG.special20.photos) ? CONFIG.special20.photos.slice(0,6) : [];
+  if(!root) return;
+  root.innerHTML = '';
+  for(let i=0;i<6;i++){
+    const p = photos[i] || {src:'', caption:'future memory'};
+    const fig = document.createElement('figure');
+    fig.className = 'special20-polaroid';
+    const tape = document.createElement('div');
+    tape.className = 'tape-strip';
+    fig.appendChild(tape);
+    if(p.src){
+      const img = document.createElement('img');
+      img.src = p.src;
+      img.alt = p.caption || '20 September 2026 memory';
+      img.loading = 'lazy';
+      img.onerror = function(){ img.replaceWith(makeSpecial20Slot()); };
+      fig.appendChild(img);
+    }else{
+      fig.appendChild(makeSpecial20Slot());
+    }
+    const cap = document.createElement('figcaption');
+    cap.className = 'special20-caption';
+    cap.textContent = p.caption || 'to be added';
+    fig.appendChild(cap);
+    root.appendChild(fig);
+  }
+}
+function makeSpecial20Slot(){
+  const slot = document.createElement('div');
+  slot.className = 'special20-slot';
+  slot.innerHTML = 'photo slot<br><span style="font-family:Space Mono,monospace;font-size:.58rem;">add image in CONFIG.special20.photos</span>';
+  return slot;
+}
+loadSpecial20Wallpaper();
+createSpecial20Polaroids();
 
 /* ---------- chapter atmospheric backgrounds (graceful fallback) ---------- */
 function loadChapterBackgrounds(){
@@ -1376,7 +1526,7 @@ function pageTurnTo(destId, opts){
   const forward = toIdx > fromIdx;
   const destMeta = CONFIG.chapters[toIdx] || {title:''};
 
-  ptbNum.textContent = toIdx >= 0 ? String(toIdx+1).padStart(2,'0') : '';
+  ptbNum.textContent = destMeta.special ? 'FIELD NOTE' : (destMeta.number || '');
   ptbTitle.textContent = destMeta.title || '';
   ptfEyebrow.textContent = forward ? 'turning the page…' : 'turning back…';
 
