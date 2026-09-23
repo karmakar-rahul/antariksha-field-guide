@@ -1252,10 +1252,10 @@ const CONFIG = {
     chapter2: 'assets/chapter-02.jpeg',
     chapter3: 'assets/chapter-03.jpeg',
     chapter4: 'assets/chapter-04.jpg',
-    chapter5: 'assets/chapter-05.png',
-    chapter6: 'assets/chapter-06.png',
-    chapter7a: 'assets/chapter-07-a.jpeg',
-    chapter7b: 'assets/chapter-07-b.jpeg',
+    chapter5: 'assets/chapter-05.jpg',
+    chapter6: 'assets/chapter-06.jpg',
+    chapter7a: 'assets/chapter-07-a.jpg',
+    chapter7b: 'assets/chapter-07-b.jpg',
     chapter8: 'assets/chapter-08.jpg',
     chapter9: 'assets/chapter-09.jpg',
     final:    'assets/final-field.jpg'
@@ -1275,16 +1275,16 @@ const CONFIG = {
     ch9: 'assets/chapter-09-bg.jpeg'
   },
 
-  /* FINAL SCENE — change these paths when you add the ending assets. */
+  /* FINAL SCENE */
   final: {
     wallpaper: 'assets/final-wallpaper.jpeg',
     collage: [
       { src: 'assets/final-01.jpeg' },
       { src: 'assets/final-02.jpeg' },
       { src: 'assets/final-03.jpeg'},
-      { src: 'assets/final-05.jpeg'},
+      { src: 'assets/final-05.jpg'},
       { src: 'assets/final-04.jpeg'},
-      { src: 'assets/final-06.jpeg'}
+      { src: 'assets/final-06.jpg'}
     ]
   },
 
@@ -1302,15 +1302,48 @@ const CONFIG = {
 
   memories: {
     photos: [
-      { src: 'assets/antariksha-01.jpeg', caption: 'Fashion Consultant' },
-      { src: 'assets/antariksha-02.jpeg', caption: 'Full-time cafe-hopping partner' },
+      { src: 'assets/antariksha-01.jpg', caption: 'Fashion Consultant' },
+      { src: 'assets/antariksha-02.jpg', caption: 'Full-time cafe-hopping partner' },
     ]
     // photos: [ { src: 'assets/antariksha-01.jpg', caption: '2019, probably' } ]
   },
   music: {
-    src: '' // e.g. 'assets/ambient.mp3'
+    src: 'assets/ambient.mpeg'
   }
 };
+
+const ambientMusic = new Audio(CONFIG.music.src);
+ambientMusic.loop = true;              // Keep the same track looping for the entire journal.
+ambientMusic.volume = 0.6;             // 60% volume.
+ambientMusic.preload = 'auto';
+
+function startAmbientMusic(){
+  if (!CONFIG.music || !CONFIG.music.src) return;
+
+  // The same Audio object is reused across every chapter, so navigation
+  // never restarts the track. If autoplay is blocked, the first user
+  // interaction starts it instead.
+  if (ambientMusic.paused) {
+    ambientMusic.play().catch(function(){
+      // Browser autoplay policy: wait for a real user gesture.
+    });
+  }
+}
+
+// Try immediately; browsers that block autoplay will simply wait for one
+// of the user-gesture listeners below.
+document.addEventListener('DOMContentLoaded', startAmbientMusic);
+document.addEventListener('pointerdown', startAmbientMusic, { once: true });
+document.addEventListener('keydown', startAmbientMusic, { once: true });
+
+// If the browser temporarily suspends the page while it is hidden, resume
+// the same track when the visitor returns. This does not restart the audio.
+document.addEventListener('visibilitychange', function(){
+  if (document.visibilityState === 'visible' && ambientMusic.paused) {
+    startAmbientMusic();
+  }
+});
+window.addEventListener('pageshow', startAmbientMusic);
 
 const indexList = document.getElementById('index-list');
 CONFIG.chapters.forEach(c=>{
@@ -1508,6 +1541,11 @@ function activateChapter(id){
 
 function pageTurnTo(destId, opts){
   opts = opts || {};
+
+  // Page navigation is a user gesture, so use it as a reliable opportunity
+  // to start/resume the background music without restarting the track.
+  startAmbientMusic();
+
   const currentId = currentChapterId;
   if(destId === currentId){ return; }
   const destEl = document.getElementById(destId);

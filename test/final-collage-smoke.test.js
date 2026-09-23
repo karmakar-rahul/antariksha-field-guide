@@ -11,5 +11,7 @@ assert(html.includes('const gridWidth = cols * cardWidth + (cols - 1) * gap;'), 
 assert(html.includes('const gridHeight = rows * cardHeight + (rows - 1) * gap;'), 'Grid height calculation is missing');
 assert(html.includes('fig.style.left = Math.round(startX + col * (cardWidth + gap)) + \'px\';'), 'Grid x placement is missing');
 assert(html.includes('fig.style.top = Math.round(startY + row * (cardHeight + gap)) + \'px\';'), 'Grid y placement is missing');
+assert(html.includes('ambientMusic.loop = true;'), 'Ambient music should loop continuously');
+assert(html.includes('ambientMusic.volume = 0.8;'), 'Ambient music should be set to about 80% volume');
 
 console.log('final-collage smoke tests passed');
